@@ -1,0 +1,146 @@
+Metadata-Version: 2.4
+Name: ogk-parental-companion
+Version: 0.1.0
+Summary: Ứng dụng hỗ trợ quản lý việc sử dụng máy tính của trẻ em - Công cụ đồng hành minh bạch
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+Requires-Dist: fastapi>=0.110.0
+Requires-Dist: uvicorn[standard]>=0.27.0
+Requires-Dist: sqlalchemy>=2.0.25
+Requires-Dist: pydantic>=2.6.0
+Requires-Dist: psutil>=5.9.8
+Requires-Dist: pywin32>=306; sys_platform == "win32"
+Requires-Dist: passlib[argon2]>=1.7.4
+Requires-Dist: cryptography>=42.0.0
+Requires-Dist: httpx>=0.27.0
+Requires-Dist: websockets>=12.0
+Requires-Dist: dnslib>=0.9.24
+Requires-Dist: jinja2>=3.1.3
+Provides-Extra: dev
+Requires-Dist: pytest>=8.0.0; extra == "dev"
+Requires-Dist: pytest-asyncio>=0.23.5; extra == "dev"
+Requires-Dist: ruff>=0.3.0; extra == "dev"
+
+# OGK — Ứng dụng Hỗ trợ Quản lý Việc Sử dụng Máy tính của Trẻ em
+
+> **"Công cụ đồng hành, không phải phần mềm theo dõi lén"**
+
+Dự án đồ án môn Mạng Máy Tính: Hệ thống Client-Server hỗ trợ phụ huynh và trẻ em cùng thống nhất, quản lý thời gian sử dụng máy tính và lọc truy cập ứng dụng/website không phù hợp trên nền tảng Windows 10/11 (x64), tuân thủ nghiêm ngặt 6 nguyên tắc minh bạch (`NT1`–`NT6`).
+
+---
+
+## 1. Phạm vi chức năng & Trạng thái triển khai
+
+> **Lưu ý:** Dự án hiện đang ở giai đoạn **khởi tạo bộ khung (Repository Skeleton)**. Các thành phần dưới đây được đánh dấu trạng thái thực tế:
+
+- [x] Khởi tạo cấu trúc dự án, cấu hình phụ thuộc (`pyproject.toml`) và tài liệu đặc tả quyền riêng tư ([`PRIVACY.md`](PRIVACY.md)).
+- [ ] **F1 — Quản lý thời gian sử dụng:** Hạn mức ngày, lịch tuần 7×48, đếm thời gian thực (trừ idle > 5 phút & locked), chống chỉnh giờ hệ thống (monotonic clock), cảnh báo trước 10/5/1 phút + ân hạn 60 giây. *(Chưa triển khai)*
+- [ ] **F2 — Lọc & kiểm soát ứng dụng/website:** Kiểm soát tiến trình theo tên + SHA-256, DNS Proxy cục bộ tại `127.0.0.1:53`, ép buộc SafeSearch, phân loại 6 nhóm tên miền (tối thiểu 200 mục) và danh sách miễn chặn khẩn cấp (`NT6`). *(Chưa triển khai)*
+- [ ] **F3 — Ghi nhận & báo cáo minh bạch:** Đồng bộ sự kiện (9 loại `type`), Dashboard phụ huynh, màn hình "Hôm nay em đã dùng gì" cho trẻ, tự động xóa sau 90 ngày và xóa tức thời theo yêu cầu. *(Chưa triển khai)*
+- [ ] **F4 — Điều khiển từ xa & Kiểm toán:** Mô hình `1 phụ huynh : n trẻ : m thiết bị`, đồng bộ chính sách qua Heartbeat (≤ 60s), lệnh khẩn qua WebSocket (≤ 5s), chữ ký toàn vẹn chính sách (HMAC-SHA256) và nhật ký kiểm toán (`audit_logs`). *(Chưa triển khai)*
+- [ ] **F5 — Bảo mật & Quyền riêng tư:** Argon2id, Cookie `HttpOnly`/`Secure`/`SameSite=Lax` + CSRF, TLS 1.2+ kèm Certificate Pinning, AES-GCM/DPAPI, phân quyền chống IDOR, kiểm tra hiển thị Tray UI bắt buộc. *(Chưa triển khai)*
+
+---
+
+## 2. Kiến trúc hệ thống & Luồng hoạt động
+
+```text
+   MÁY CỦA TRẺ (Windows 10/11 x64)                MÁY CHỦ (LAN / VPS Lab)
+ +-----------------------------------+          +-------------------------------+
+ | OGK-Agent (Python 3.11+)          |          | OGK-Server (FastAPI/Uvicorn)  |
+ | +-------------------------------+ |  HTTPS   | +---------------------------+ |
+ | | Windows Service (LocalSystem) | | TLS 1.2+ | | REST API (/auth, /enroll, | |
+ | | - Policy Enforcer (HMAC check)|<+----------+>|  /policy, /events, /audit)| |
+ | | - Screen-time Counter         | | Heartbeat| +---------------------------+ |
+ | | - App Controller (SHA-256)    | |   60s    | | WebSocket (/ws/commands)  | |
+ | | - DNS Proxy (127.0.0.1:53)    |<+----------+>|  (Lệnh khẩn < 5s)         | |
+ | | - Local Cache (SQLite + ACL)  | |   WSS    | +---------------------------+ |
+ | +-------------------------------+ |          | | SQLite (WAL) + SQLAlchemy | |
+ |                 ^                 |          +---------------^---------------+
+ |     IPC (Named Pipe / Localhost)  |                          | HTTPS
+ |                 v                 |                 +--------+--------+
+ | +-------------------------------+ |                 | Dashboard Web   |
+ | | Tray UI (User Session)        | |                 | (Phụ huynh/Trẻ) |
+ | +-------------------------------+ |                 +-----------------+
+ +-----------------------------------+
+```
+
+1. **Ghép đôi (Enrollment):** Phụ huynh tạo mã ghép 8 ký tự (hiệu lực 10 phút) trên Dashboard. Agent gửi mã kèm `device_fingerprint` qua `POST /enroll` và nhận `device_id`, `access_token` (15 phút), `refresh_token`.
+2. **Nhịp tim (Heartbeat 60s):** Agent định kỳ gửi trạng thái, thời gian đã dùng và `policy_version` hiện tại. Nếu lệch phiên bản, Agent gọi `GET /policy`, xác thực chữ ký HMAC-SHA256 trước khi lưu vào SQLite cục bộ.
+3. **Kênh lệnh khẩn (WebSocket):** Duy trì kết nối WSS từ Agent lên Server để nhận lệnh khóa ngay, mở khóa, cộng 15 phút hoặc xóa dữ liệu với độ trễ dưới 5 giây.
+4. **Hoạt động ngoại tuyến (Offline Mode):** Khi mất kết nối tới Server, Agent áp dụng bản sao chính sách gần nhất trong SQLite cục bộ, tiếp tục đếm giờ và xếp hàng sự kiện kèm `idempotency_key` để đồng bộ theo lô khi có mạng trở lại.
+5. **Giao tiếp nội bộ (IPC):** Windows Service (chạy dưới quyền `LocalSystem`) giao tiếp hai chiều với Tray UI (chạy trong phiên người dùng) qua Named Pipe hoặc HTTP `127.0.0.1` có xác thực token cục bộ. Nghiêm cấm chạy ẩn: nếu Tray UI không thể hiển thị trong phiên người dùng đang hoạt động, Agent dừng áp dụng chặn và ghi nhận trạng thái theo nguyên tắc `NT1` và `F5`.
+
+---
+
+## 3. Giao thức và Định dạng thông điệp
+
+- **Kênh Agent ↔ Server:** HTTPS (TLS 1.2+) và WSS (WebSocket over TLS) với Certificate Pinning (kiểm tra SPKI/SHA-256 fingerprint của chứng chỉ Server). Định dạng tải tin là JSON theo lược đồ trong [`shared/schemas.py`](shared/schemas.py).
+- **Lược đồ sự kiện (`EventRecord`):** Chỉ gồm đúng 7 trường nghiệp vụ (`ts`, `device_id`, `child_id`, `type`, `subject`, `duration_sec`, `policy_id`) kèm khóa chống trùng `idempotency_key`.
+- **Giao thức DNS Proxy (`127.0.0.1:53`):** Hỗ trợ cả UDP và TCP port 53 theo RFC 1035, phân tích gói tin DNS query, kiểm tra danh sách miễn chặn (`NT6`), áp dụng CNAME SafeSearch hoặc chặn tên miền vi phạm trước khi chuyển tiếp (forward) tới DNS upstream.
+- **Giao thức IPC (Service ↔ Tray UI):** Thông điệp JSON đóng gói có độ dài tiền tố (4-byte big-endian length prefix) qua Windows Named Pipe `\\.\pipe\ogk_agent_ipc` kèm token xác thực phiên.
+
+---
+
+## 4. Yêu cầu môi trường (Prerequisites)
+
+- **Hệ điều hành:** Windows 10/11 (x64) cho `OGK-Agent`; Windows hoặc Linux cho `OGK-Server`.
+- **Ngôn ngữ:** Python `3.11+`.
+- **Quyền hệ thống:** Quyền `Administrator` khi đăng ký Windows Service, thiết lập ACL thư mục `C:\ProgramData\OGK` và mở cổng `127.0.0.1:53`.
+
+---
+
+## 5. Hướng dẫn cài đặt và chạy (Build & Run)
+
+### 5.1. Thiết lập môi trường ảo
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -e ".[dev]"
+```
+
+### 5.2. Chạy thành phần (Sau khi triển khai)
+
+> Các lệnh dưới đây là giao diện dòng lệnh mục tiêu cho từng module:
+
+- **Khởi chạy OGK-Server (Lab TLS):**
+  ```powershell
+  # Cần tạo chứng chỉ tự ký cho môi trường Lab trước khi chạy TLS
+  uvicorn server.main:app --host 0.0.0.0 --port 8443 --ssl-keyfile certs/server.key --ssl-certfile certs/server.crt
+  ```
+- **Khởi chạy OGK-Agent (Chế độ phát triển / Debug console):**
+  ```powershell
+  python -m agent.service --debug
+  python -m agent.tray_ui
+  ```
+
+---
+
+## 6. Hướng dẫn kiểm thử (Testing)
+
+Chạy bộ kiểm thử đơn vị (unit tests) với `pytest`:
+
+```powershell
+pytest -v
+```
+
+*(Các kịch bản kiểm thử tích hợp cho F1–F5 và bộ dữ liệu 200+ tên miền an toàn trong `data/` sẽ được bổ sung theo tiến độ 7 tuần).*
+
+---
+
+## 7. Giới hạn đã biết (Known Limitations)
+
+1. **DNS Proxy & DoH:** DNS Proxy ở `127.0.0.1:53` chỉ kiểm soát truy vấn DNS truyền thống (UDP/TCP 53). Nếu trình duyệt bật DNS-over-HTTPS (DoH) tới máy chủ ngoài, Agent chỉ có thể chặn phân giải tên miền của các điểm cuối DoH đã biết (nằm trong danh mục kiểm thử DoH) hoặc cấu hình Group Policy của trình duyệt.
+2. **Trạng thái hiện tại:** Mới chỉ có cấu trúc thư mục và định nghĩa lược đồ cơ sở, chưa có logic thực thi.
+
+---
+
+## 8. Tài liệu tham khảo
+
+- [RFC 1035 — Domain Names - Implementation and Specification](https://datatracker.ietf.org/doc/html/rfc1035)
+- [RFC 6455 — The WebSocket Protocol](https://datatracker.ietf.org/doc/html/rfc6455)
+- [RFC 9110 — HTTP Semantics](https://datatracker.ietf.org/doc/html/rfc9110)
+- [Microsoft Win32 Service Control Manager Documentation](https://learn.microsoft.com/en-us/windows/win32/services/services)
+- [FastAPI Official Documentation](https://fastapi.tiangolo.com/)
+- [SQLite Write-Ahead Logging (WAL)](https://www.sqlite.org/wal.html)

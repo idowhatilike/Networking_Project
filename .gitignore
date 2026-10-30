@@ -1,0 +1,61 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions & PyInstaller / packaging
+*.so
+*.pyd
+build/
+dist/
+*.spec
+*.manifest
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Databases & local state (SQLite + WAL/SHM)
+*.db
+*.sqlite
+*.sqlite3
+*.db-wal
+*.db-shm
+*.sqlite-wal
+*.sqlite-shm
+
+# Secrets, environment variables, and TLS certificates/keys
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+*.csr
+*.p12
+*.pfx
+!tests/fixtures/*.crt
+
+# Logs and runtime artifacts
+*.log
+logs/
+*.pid
+*.pipe
+
+# Testing & coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# OS & Editor artifacts
+.DS_Store
+Thumbs.db
+Desktop.ini
+.vscode/
+.idea/
+*.swp
+*.swo
