@@ -1,4 +1,9 @@
-"Giao thức và đối tượng chung . Tuân thủ NT (Obj = Ứng dụng/Website)"
+#Giao thức và đối tượng chung . Tuân thủ NT (Obj = Ứng dụng/Website)
+
+#Note : Ký hiệu chuẩn 
+#ACK = Acknowledgment - Thông điệp xác nhận
+#WMI = Windows Management Instrumentation - Quản trị windows
+
 from enum import StrEnum
 from typing import Literal
 from pydantic import BaseModel, Field
@@ -34,6 +39,23 @@ class UserRole(StrEnum) :
     ADMIN = "admin"
 
 
+class BlockReason(StrEnum) :
+    #Phân biệt 5 nguyên nhân chặn
+    NONE = "none"
+    POLICY = "policy"             #Bị cấm trực tiếp trong Policy (allowed == False)
+    SCHEDULE = "schedule"         #Ngoài khung giờ lịch tuần 7x48
+    DEVICE_QUOTA = "device_quota" #Hết hạn thời gian toàn thiết bị (device_unlocked_until)
+    APP_QUOTA = "app_quota"       #Hết quota của riêng ứng dụng
+    WEB_QUOTA = "web_quota"       #Hết quota của riêng website/domain
+
+
+class TargetType(StrEnum) :
+    #3 phạm vi tác động của lệnh thời gian
+    DEVICE = "device"
+    APP = "app"
+    WEB = "web"
+
+
 class EventState(BaseModel) :
     #Event state
     ts: int = Field(... , description = "Unix thời gian (seconds)")
@@ -44,6 +66,10 @@ class EventState(BaseModel) :
     duration_sec: int = Field(default = 0 , ge = 0)
     policy_id: str
     idempotency_key: str = Field(... , description = "Chống trùng khi đồng bộ")
+
+
+#Alias tương thích với test
+EventRecord = EventState
 
 
 #Agent gửi request , server xử lý và gửi trả response 
@@ -74,24 +100,45 @@ class HeartbeatRequest(BaseModel) :
     status_cur : Literal["active", "idle", "locked"]
     quota_used : dict[str, int]# Sửa : Kiểm soát hàng loạt chứ không chỉ 1 web/app
     cur_policy_version : int
+    acked_commands : list[str] = [] #Danh sách lệnh Agent xác nhận đã nhận . 
     
     
 class HeartbeatResponse(BaseModel) :
     latest_policy_version : int
     pending_commands : list[str] = []
+    device_unlocked_until : int = 0 #Đồng bộ thời điểm hết hạn thiết bị từ Server
+    app_bonus_time : dict[str , int] = {} #Đồng bộ bonus time từng app độc lập với Policy gốc
+    web_bonus_time : dict[str , int] = {} #Đồng bộ bonus time từng web/domain độc lập với Policy gốc
 
+
+#Lệnh khẩn
+class CommandType(StrEnum) :
+    LOCK = "lock"
+    UNLOCK = "unlock"
+    ADD_TIME = "add_time"
+    SUB_TIME = "sub_time"
+
+
+class UrgentCmd(BaseModel) :
+    cmd_type : CommandType
+    target_type : TargetType = TargetType.DEVICE #Chọn tác động lên DEVICE, APP hoặc WEB
+    subject : str = "" #Tên process_name (khi APP) hoặc domain (khi WEB)
+    bonus_time : int = Field(default = 0 , ge = 0)#Time unit : Second
+    sub_time : int = Field(default = 0 , ge = 0)#Time unit : Second
 
 #Luật (gồm luật cho app , web - thông qua domain , policy (id , version) , lịch , hạn mức)
 class AppRule(BaseModel) :
     exe_name : str
     sha256 : str
-    allowed : bool
+    allowed : bool #False = bị cấm bởi Policy, True = được phép
+    quota : int = 0 #Quota gốc của riêng ứng dụng (giây, 0 = không giới hạn riêng)
 
 
 class DomainRule(BaseModel) :
     domain : str
     category : DomainCategory
-    allowed : bool
+    allowed : bool #False = bị cấm bởi Policy, True = được phép
+    quota : int = 0 #Quota gốc của riêng website/domain (giây, 0 = không giới hạn riêng)
 
 
 class Policy(BaseModel) :

@@ -59,3 +59,14 @@ Desktop.ini
 .idea/
 *.swp
 *.swo
+
+# Local AI review, debug & runtime state files
+.agents/
+.agent/
+_agents/
+_agent/
+scripts/
+REVIEW_SUMMARY.md
+REVIEW_BUNDLE.md
+quota_state.json
+*.tmp
