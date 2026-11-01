@@ -30,12 +30,15 @@ import uuid
 import json
 import time
 from pathlib import Path
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from enum import StrEnum
 import win32com.client
 import httpx
 
 app = FastAPI()
+
+#Múi giờ Việt Nam (UTC+7) dùng cho Wall clock để xác định ngày lịch, ngày thường/cuối tuần và mốc reset 00:00
+VN_TZ = timezone(timedelta(hours = 7))
 
 curCode : PairingCode | None = None
 
@@ -44,21 +47,70 @@ device_tokens : dict[str , str] = {}
 device_states : dict[str , dict] = {}
 policies_store : dict[str , Policy] = {}
 pending_cmds_store : dict[str , list[str]] = {}
-active_ws_connections : dict[str , WebSocket] = {} #Quản lý kết nối WebSocket theo device_id
-urgent_acks_store : dict[str , list[dict]] = {} #Lưu lịch sử ACK của lệnh khẩn từ Agent
+#WebSocket: kênh kết nối duy trì liên tục để Server đẩy lệnh khẩn xuống Agent ngay lập tức
+active_ws_connections : dict[str , WebSocket] = {}
+#ACK (Acknowledgment): thông báo xác nhận Agent đã xử lý lệnh
+urgent_acks_store : dict[str , list[dict]] = {}
 
-#Quản lý thời điểm hết hạn thiết bị và bonus time từng app/web độc lập với Policy gốc
-device_unlocked_store : dict[str , int] = {} #device_id -> device_unlocked_until (timestamp)
-app_bonus_store : dict[str , dict[str , int]] = {} #device_id -> {process_name : bonus_sec}
-web_bonus_store : dict[str , dict[str , int]] = {} #device_id -> {domain : bonus_sec}
+#Quota & Bonus time: hạn mức thời điểm mở khóa thiết bị, ngày chu kỳ quota (YYYY-MM-DD) và điều chỉnh thời gian App/Web
+device_unlocked_store : dict[str , int] = {}
+device_used_store : dict[str , int] = {}
+device_quota_date_store : dict[str , str] = {}
+device_policy_store : dict[str , str] = {}
+app_bonus_store : dict[str , dict[str , int]] = {}
+web_bonus_store : dict[str , dict[str , int]] = {}
 QUOTA_STATE_FILE = Path("quota_state.json")
 
 
+def getVnNow() -> datetime :
+    return datetime.fromtimestamp(time.time() , tz = VN_TZ)
+
+
+def getTodayDateStr() -> str :
+    return getVnNow().strftime("%Y-%m-%d")
+
+
+def getDeviceBaseQuota(device_id : str , policy_id : str | None = None) -> int :
+    now_dt = getVnNow()
+    is_weekend = now_dt.weekday() >= 5
+    plc_id = policy_id or device_policy_store.get(device_id)
+    if not plc_id and device_id.startswith("di_") :
+        plc_id = f"plcid_{device_id[3:]}"
+    plc = policies_store.get(plc_id) if plc_id else None
+    if plc is None and len(policies_store) == 1 :
+        plc = next(iter(policies_store.values()))
+    if plc is not None :
+        return plc.weekend_quota if is_weekend else plc.weekday_quota
+    return 7200 if is_weekend else 5400
+
+
+def ensureDeviceDailyQuota(device_id : str , policy_id : str | None = None) :
+    #Chu kỳ DEVICE quota theo ngày lịch VN (00:00 UTC+7): giữ nguyên nếu cùng ngày, chỉ reset một lần khi qua ngày mới
+    today_str = getTodayDateStr()
+    if policy_id :
+        device_policy_store[device_id] = policy_id
+    saved_date = device_quota_date_store.get(device_id)
+    if saved_date is not None and today_str <= saved_date and device_id in device_unlocked_store :
+        return
+    if saved_date is None and device_id in device_unlocked_store :
+        device_quota_date_store[device_id] = today_str
+        saveQuotaState()
+        return
+    base_quota = getDeviceBaseQuota(device_id , policy_id)
+    device_unlocked_store[device_id] = int(time.time()) + base_quota
+    device_used_store[device_id] = 0
+    device_quota_date_store[device_id] = today_str
+    saveQuotaState()
+
+
 def saveQuotaState() :
-    #Lưu bền vững trạng thái quota/bonus trên Server xuống file
+    #Lưu trạng thái quota, ngày chu kỳ và điều chỉnh thời gian xuống file để bảo toàn khi Server khởi động lại
     try :
         data = {
             "device_unlocked" : device_unlocked_store ,
+            "device_used" : device_used_store ,
+            "device_quota_date" : device_quota_date_store ,
+            "device_policy" : device_policy_store ,
             "app_bonus" : app_bonus_store ,
             "web_bonus" : web_bonus_store
         }
@@ -68,12 +120,16 @@ def saveQuotaState() :
 
 
 def loadQuotaState() :
-    #Khôi phục trạng thái quota/bonus đã lưu bền vững trên Server
-    global device_unlocked_store , app_bonus_store , web_bonus_store
+    #Khôi phục trạng thái quota khi khởi động: cùng ngày thì giữ nguyên, sang ngày mới (00:00 UTC+7) thì reset theo Policy
+    global device_unlocked_store , device_used_store , device_quota_date_store , device_policy_store
+    global app_bonus_store , web_bonus_store
     if QUOTA_STATE_FILE.exists() :
         try :
             data = json.loads(QUOTA_STATE_FILE.read_text(encoding = "utf-8"))
             device_unlocked_store = {k : int(v) for k , v in data.get("device_unlocked" , {}).items()}
+            device_used_store = {k : int(v) for k , v in data.get("device_used" , {}).items()}
+            device_quota_date_store = {k : str(v) for k , v in data.get("device_quota_date" , {}).items()}
+            device_policy_store = {k : str(v) for k , v in data.get("device_policy" , {}).items()}
             app_bonus_store = {
                 k : {ak : int(av) for ak , av in v.items()}
                 for k , v in data.get("app_bonus" , {}).items()
@@ -82,6 +138,32 @@ def loadQuotaState() :
                 k : {wk : int(wv) for wk , wv in v.items()}
                 for k , v in data.get("web_bonus" , {}).items()
             }
+            today_str = getTodayDateStr()
+            state_changed = False
+            for dev_id , unlocked_val in list(device_unlocked_store.items()) :
+                saved_date = device_quota_date_store.get(dev_id)
+                if saved_date is None :
+                    #Tương thích dữ liệu chưa có ngày chu kỳ: giá trị 0 là đã cạn quota trong ngày nên không cấp lại
+                    if unlocked_val == 0 :
+                        device_quota_date_store[dev_id] = today_str
+                        state_changed = True
+                    else :
+                        unlocked_date = datetime.fromtimestamp(unlocked_val , tz = VN_TZ).strftime("%Y-%m-%d")
+                        if unlocked_date >= today_str :
+                            device_quota_date_store[dev_id] = today_str
+                            state_changed = True
+                        else :
+                            device_unlocked_store[dev_id] = int(time.time()) + getDeviceBaseQuota(dev_id)
+                            device_used_store[dev_id] = 0
+                            device_quota_date_store[dev_id] = today_str
+                            state_changed = True
+                elif today_str > saved_date :
+                    device_unlocked_store[dev_id] = int(time.time()) + getDeviceBaseQuota(dev_id)
+                    device_used_store[dev_id] = 0
+                    device_quota_date_store[dev_id] = today_str
+                    state_changed = True
+            if state_changed :
+                saveQuotaState()
         except Exception :
             pass
 
@@ -91,7 +173,7 @@ loadQuotaState()
 
 @app.post("/api/v1/enroll" , response_model = EnrollmentResponse)
 def responseEnroll(payload : EnrollmentRequest) :
-    #Kiểm tra hạn và tính hợp lệ 
+    #Enroll: đăng ký thiết bị lần đầu bằng mã ghép đôi (pairing_code), cấp token và khởi tạo Policy mặc định
     if curCode is None or payload.pairing_code != curCode.pairing_code or time.time() > curCode.expires_at :
         raise HTTPException(
             status_code = status.HTTP_400_BAD_REQUEST,
@@ -103,10 +185,8 @@ def responseEnroll(payload : EnrollmentRequest) :
     acc_token = f"at_{uuid_device}"
     plc_id = f"plcid_{uuid_device}"
 
-    #Lưu token tương ứng cho thiết bị
     device_tokens[dev_id] = acc_token
 
-    #Tạo Policy mặc định
     if plc_id not in policies_store :
         policies_store[plc_id] = Policy(
             policy_id = plc_id ,
@@ -119,11 +199,7 @@ def responseEnroll(payload : EnrollmentRequest) :
             signature = "unsigned"
         )
 
-    #Khởi tạo device_unlocked_until, app_bonus_time và web_bonus_time độc lập với Policy gốc
-    if dev_id not in device_unlocked_store :
-        plc = policies_store[plc_id]
-        base_quota = plc.weekend_quota if datetime.now().weekday() >= 5 else plc.weekday_quota
-        device_unlocked_store[dev_id] = int(time.time()) + base_quota
+    ensureDeviceDailyQuota(dev_id , plc_id)
     app_bonus_store.setdefault(dev_id , {})
     web_bonus_store.setdefault(dev_id , {})
     saveQuotaState()
@@ -138,35 +214,48 @@ def responseEnroll(payload : EnrollmentRequest) :
 
 @app.post("/api/v1/heartbeat" , response_model = HeartbeatResponse)
 def responseHeartbeat(payload : HeartbeatRequest) :
-    #1.Check device_id và access_token hợp lệ
+    #Heartbeat: nhận báo cáo định kỳ từ Agent, xóa các lệnh chờ đã có ACK và trả về dữ liệu đồng bộ
     if device_tokens.get(payload.device_id) != payload.access_token :
         raise HTTPException(
             status_code = status.HTTP_401_UNAUTHORIZED,
             detail = "ACCESS_TOKEN khong tuong ung voi DEVICE_ID",
         )
 
-    #2.Ghi trạng thái và usage của Agent
     device_states[payload.device_id] = {
         "status_cur": payload.status_cur,
         "quota_used": payload.quota_used,
     }
 
-    #3.Lấy policy tương ứng
     policy = policies_store.get(payload.policy_id)
     latest_ver = policy.policy_version if policy else payload.cur_policy_version
+    ensureDeviceDailyQuota(payload.device_id , payload.policy_id)
 
-    #4.Xử lý xác nhận (ACK) và xuất vector lệnh chờ (không xóa ngay để tự retry nếu rớt mạng)
-    #Bổ sung chống cơ chế Data Integrity cho vector <cmd>
-    cur_cmds = pending_cmds_store.get(payload.device_id , []) #Lấy danh sách lệnh đang lưu của thiết bị
-    if payload.acked_commands : #Nếu Agent gửi kèm danh sách lệnh đã nhận thành công
-        cur_cmds = [c for c in cur_cmds if c not in payload.acked_commands] #Lọc bỏ các lệnh đã được Agent xác nhận
-        pending_cmds_store[payload.device_id] = cur_cmds #Lưu lại phần lệnh chưa được xác nhận để gửi tiếp
+    #Đồng bộ thời gian sử dụng thực tế của thiết bị do Agent đo bằng monotonic clock
+    if "__device__" in payload.quota_used :
+        reported_used = max(0 , int(payload.quota_used["__device__"]))
+        prev_used = device_used_store.get(payload.device_id , 0)
+        if reported_used > prev_used :
+            used_delta = reported_used - prev_used
+            device_used_store[payload.device_id] = reported_used
+            cur_until = device_unlocked_store.get(payload.device_id , 0)
+            if cur_until > 0 :
+                new_until = max(0 , cur_until - used_delta)
+                if new_until <= int(time.time()) :
+                    new_until = 0
+                device_unlocked_store[payload.device_id] = new_until
+            saveQuotaState()
 
-    #5.Trả về kèm trạng thái device_unlocked_until, app_bonus_time, web_bonus_time để đồng bộ
+    #Giữ lệnh trong hàng chờ cho đến khi Agent gửi ACK xác nhận đã thực thi
+    cur_cmds = pending_cmds_store.get(payload.device_id , [])
+    if payload.acked_commands :
+        cur_cmds = [c for c in cur_cmds if c not in payload.acked_commands]
+        pending_cmds_store[payload.device_id] = cur_cmds
+
     return HeartbeatResponse(
         latest_policy_version = latest_ver ,
         pending_commands = cur_cmds ,
         device_unlocked_until = device_unlocked_store.get(payload.device_id , 0) ,
+        device_quota_date = device_quota_date_store.get(payload.device_id , getTodayDateStr()) ,
         app_bonus_time = app_bonus_store.get(payload.device_id , {}) ,
         web_bonus_time = web_bonus_store.get(payload.device_id , {})
     )
@@ -174,14 +263,12 @@ def responseHeartbeat(payload : HeartbeatRequest) :
 
 @app.get("/api/v1/policy" , response_model = Policy)
 def responsePolicy(device_id : str , access_token : str , policy_id : str) :
-    #1.Check device_id và access_token
     if device_tokens.get(device_id) != access_token :
         raise HTTPException(
             status_code = status.HTTP_401_UNAUTHORIZED ,
             detail = "ACCESS_TOKEN khong tuong ung voi DEVICE_ID" ,
         )
 
-    #2.Lấy policy
     policy = policies_store.get(policy_id)
     if policy is None :
         raise HTTPException(
@@ -192,32 +279,28 @@ def responsePolicy(device_id : str , access_token : str , policy_id : str) :
     return policy
 
 
-#WebSocket kênh lệnh khẩn
 @app.websocket("/ws/urgent")
 async def urgentWebsocketEndpoint(websocket : WebSocket , device_id : str , access_token : str) :
-    #1.Xác thực Agent bằng device_id và access_token
     if device_tokens.get(device_id) != access_token :
         await websocket.close(code = status.WS_1008_POLICY_VIOLATION)
         return
 
-    #2.Chấp nhận kết nối và lưu theo device_id
     await websocket.accept()
     active_ws_connections[device_id] = websocket
 
-    #3.Lắng nghe ACK trả về từ Agent và luôn dọn kết nối an toàn trong finally
     try :
         while True :
-            ack_data = await websocket.receive_json() #Nhận gói ACK từ Agent
+            ack_data = await websocket.receive_json()
             if isinstance(ack_data , dict) :
-                urgent_acks_store.setdefault(device_id , []).append(ack_data) #Ghi nhận kết quả ACK
+                urgent_acks_store.setdefault(device_id , []).append(ack_data)
                 if "status_cur" in ack_data and device_id in device_states :
-                    device_states[device_id]["status_cur"] = ack_data["status_cur"] #Đồng bộ ngay trạng thái mới
+                    device_states[device_id]["status_cur"] = ack_data["status_cur"]
     except WebSocketDisconnect :
         pass
     except Exception as e :
         print(f"Loi WebSocket urgent ({device_id}) : {e}")
     finally :
-        #Chỉ xóa nếu kết nối đang lưu đúng là kết nối hiện tại (không xóa nhầm kết nối mới hơn của cùng device_id)
+        #Chỉ xóa nếu kết nối đang lưu đúng là kết nối hiện tại (tránh xóa nhầm kết nối mới hơn của cùng device_id)
         if active_ws_connections.get(device_id) is websocket :
             active_ws_connections.pop(device_id , None)
 
@@ -228,7 +311,7 @@ async def sendUrgentCmd(
     cmd : UrgentCmd ,
     parent_token : str | None = Header(default = None , alias = "X-Parent-Token")
 ) :
-    #0.Xác thực quyền Parent/Admin qua biến môi trường PARENT_TOKEN và kiểm tra device_id đã đăng ký
+    #Xác thực quyền phụ huynh qua PARENT_TOKEN và kiểm tra thiết bị đã đăng ký
     expected_token = os.environ.get("PARENT_TOKEN")
     if not expected_token or not isinstance(parent_token , str) or parent_token != expected_token :
         raise HTTPException(
@@ -241,11 +324,15 @@ async def sendUrgentCmd(
             detail = "Thiet bi khong ton tai" ,
         )
 
-    #1.Cập nhật bonus/hạn mức cho DEVICE, APP hoặc WEB độc lập với Policy gốc và lưu bền vững
+    #1.Cập nhật thời gian cho DEVICE, APP hoặc WEB và lưu xuống file
     if cmd.cmd_type == CommandType.ADD_TIME :
         if cmd.target_type == TargetType.DEVICE :
+            ensureDeviceDailyQuota(device_id)
             cur_until = device_unlocked_store.get(device_id , int(time.time()))
+            if cur_until == 0 :
+                cur_until = int(time.time())
             device_unlocked_store[device_id] = cur_until + cmd.bonus_time
+            device_quota_date_store[device_id] = getTodayDateStr()
         elif cmd.target_type == TargetType.APP and cmd.subject :
             app_name = cmd.subject.lower().strip()
             dev_bonus = app_bonus_store.setdefault(device_id , {})
@@ -258,19 +345,22 @@ async def sendUrgentCmd(
 
     elif cmd.cmd_type == CommandType.SUB_TIME :
         if cmd.target_type == TargetType.DEVICE :
+            ensureDeviceDailyQuota(device_id)
             cur_until = device_unlocked_store.get(device_id , int(time.time()))
             device_unlocked_store[device_id] = max(0 , cur_until - cmd.sub_time)
+            device_quota_date_store[device_id] = getTodayDateStr()
         elif cmd.target_type == TargetType.APP and cmd.subject :
             app_name = cmd.subject.lower().strip()
             dev_bonus = app_bonus_store.setdefault(device_id , {})
-            dev_bonus[app_name] = max(0 , dev_bonus.get(app_name , 0) - cmd.sub_time)
+            #Cho phép tổng điều chỉnh (total_adjustment) âm khi SUB_TIME vượt phần cộng thêm để trừ vào quota gốc
+            dev_bonus[app_name] = dev_bonus.get(app_name , 0) - cmd.sub_time
         elif cmd.target_type == TargetType.WEB and cmd.subject :
             domain_name = cmd.subject.lower().strip()
             dev_web_bonus = web_bonus_store.setdefault(device_id , {})
-            dev_web_bonus[domain_name] = max(0 , dev_web_bonus.get(domain_name , 0) - cmd.sub_time)
+            dev_web_bonus[domain_name] = dev_web_bonus.get(domain_name , 0) - cmd.sub_time
         saveQuotaState()
 
-    #2.Nếu Agent đang mở WebSocket thì đẩy lệnh khẩn ngay; nếu kết nối stale/lỗi thì dọn dẹp và chuyển sang heartbeat_sync
+    #2.Ưu tiên đẩy lệnh qua WebSocket; nếu kết nối đứt ngầm (stale) thì dọn bỏ và chuyển sang đồng bộ qua Heartbeat
     ws = active_ws_connections.get(device_id)
     if ws is not None :
         try :
@@ -281,7 +371,7 @@ async def sendUrgentCmd(
             if active_ws_connections.get(device_id) is ws :
                 active_ws_connections.pop(device_id , None)
 
-    #3.Nếu mất kết nối WebSocket: lưu lệnh LOCK/UNLOCK vào hàng chờ Heartbeat (quota đã lưu ở bước 1)
+    #3.Khi không có WebSocket, xếp lệnh LOCK/UNLOCK vào hàng chờ Heartbeat
     if cmd.cmd_type in (CommandType.LOCK , CommandType.UNLOCK) :
         cmd_id = f"{int(time.time())}:{cmd.cmd_type}"
         pending_cmds_store.setdefault(device_id , []).append(cmd_id)

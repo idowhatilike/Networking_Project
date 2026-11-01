@@ -16,6 +16,7 @@ from shared.schemas import (
     EventRecord,
     EventType,
     HeartbeatRequest,
+    HeartbeatResponse,
     PairingCode,
     Policy,
     TargetType,
@@ -26,7 +27,7 @@ import agent
 
 
 def runSyncCoro(coro) :
-    #Chạy coroutine không cần tạo ProactorEventLoop socket trên Windows
+    #Coroutine: hàm bất đồng bộ (async def); chạy trực tiếp bước send(None) để không cần khởi tạo socket loop trên Windows
     try :
         coro.send(None)
     except StopIteration as stop :
@@ -72,6 +73,7 @@ def test_device_app_web_quota_and_block_reasons() :
     agent.app_bonus_time = {}
     agent.web_bonus_time = {}
     agent.device_unlocked_until = int(time.time()) + 1800
+    agent.is_manual_locked = False
 
     with patch("agent.psutil.process_iter" , return_value = []) :
         #1.Kiểm tra phân biệt nguyên nhân chặn: POLICY vs APP_QUOTA vs WEB_QUOTA
@@ -85,25 +87,25 @@ def test_device_app_web_quota_and_block_reasons() :
         assert "youtube.com" in agent.blocked_domains
 
         #2.ADD_TIME cho APP: chỉ mở lại roblox.exe, không ảnh hưởng youtube.com hay Policy gốc
-        agent.executeUrgentCmd(UrgentCmd(
+        agent.execCmd(UrgentCmd(
             cmd_type = CommandType.ADD_TIME ,
             target_type = TargetType.APP ,
             subject = "roblox.exe" ,
             bonus_time = 300
         ))
-        assert agent.cur_policy.app_rules[1].quota == 600 #Policy gốc giữ nguyên
+        assert agent.cur_policy.app_rules[1].quota == 600
         assert agent.getAppRemainingQuota("roblox.exe") == 300
         assert agent.app_block_reasons["roblox.exe"] == BlockReason.NONE
-        assert agent.domain_block_reasons["youtube.com"] == BlockReason.WEB_QUOTA #Web vẫn bị chặn
+        assert agent.domain_block_reasons["youtube.com"] == BlockReason.WEB_QUOTA
 
         #3.ADD_TIME cho WEB: chỉ mở lại youtube.com, giữ nguyên Policy gốc
-        agent.executeUrgentCmd(UrgentCmd(
+        agent.execCmd(UrgentCmd(
             cmd_type = CommandType.ADD_TIME ,
             target_type = TargetType.WEB ,
             subject = "youtube.com" ,
             bonus_time = 450
         ))
-        assert agent.cur_policy.domain_rules[1].quota == 900 #Policy gốc giữ nguyên
+        assert agent.cur_policy.domain_rules[1].quota == 900
         assert agent.getWebRemainingQuota("youtube.com") == 450
         assert agent.domain_block_reasons["youtube.com"] == BlockReason.NONE
         assert "youtube.com" not in agent.blocked_domains
@@ -115,7 +117,7 @@ def test_device_app_web_quota_and_block_reasons() :
         assert agent.device_block_reason == BlockReason.DEVICE_QUOTA
 
         #5.ADD_TIME cho DEVICE -> cộng trực tiếp vào device_unlocked_until và mở lại thiết bị
-        agent.executeUrgentCmd(UrgentCmd(
+        agent.execCmd(UrgentCmd(
             cmd_type = CommandType.ADD_TIME ,
             target_type = TargetType.DEVICE ,
             bonus_time = 900
@@ -179,6 +181,7 @@ def test_agent_restart_and_disconnect_sync() :
     agent.device_unlocked_until = 0
     agent.app_bonus_time = {}
     agent.web_bonus_time = {}
+    agent.is_manual_locked = False
     agent.cur_policy = server.policies_store[plc_id]
     agent.cur_policy_version = 1
 
@@ -342,6 +345,613 @@ def test_websocket_cleanup_and_reconnection_s2() :
             runSyncCoro(agent.UrgentCmdHandler(max_retries = 0))
     finally :
         agent.ws_handler_running = False
+        agent.is_manual_locked = False
 
     if server.QUOTA_STATE_FILE.exists() :
         server.QUOTA_STATE_FILE.unlink()
+
+
+def test_manual_lock_preservation_and_shared_cmd_semantics_c1() :
+    agent.cur_policy = Policy(
+        policy_id = "plcid_c1" ,
+        policy_version = 1 ,
+        weekday_quota = 3600 ,
+        weekend_quota = 7200 ,
+        schedule_7x48 = [[True] * 48 for _ in range(7)] ,
+        app_rules = [
+            AppRule(exe_name = "roblox.exe" , sha256 = "b" * 64 , allowed = True , quota = 600) ,
+        ] ,
+        domain_rules = [] ,
+        signature = "unsigned"
+    )
+    agent.cur_policy_version = 1
+    agent.quota_used = {}
+    agent.app_bonus_time = {}
+    agent.web_bonus_time = {}
+    agent.executed_cmds = set()
+    agent.acked_commands = []
+    agent.is_manual_locked = False
+    agent.device_unlocked_until = int(time.time()) + 1800
+
+    with patch("agent.psutil.process_iter" , return_value = []) :
+        #1.Khóa thủ công qua WebSocket (execCmd): bảo toàn khóa khi applyPolicy chạy lại hoặc khi cộng giờ cho App
+        agent.execCmd(UrgentCmd(cmd_type = CommandType.LOCK))
+        assert agent.is_manual_locked is True
+        assert agent.status_cur == "locked"
+        assert agent.device_block_reason == BlockReason.POLICY
+
+        agent.applyPolicy()
+        assert agent.status_cur == "locked"
+        assert agent.device_block_reason == BlockReason.POLICY
+
+        agent.execCmd(UrgentCmd(
+            cmd_type = CommandType.ADD_TIME ,
+            target_type = TargetType.APP ,
+            subject = "roblox.exe" ,
+            bonus_time = 300
+        ))
+        assert agent.status_cur == "locked"
+        assert agent.device_block_reason == BlockReason.POLICY
+
+        #2.Gỡ khóa thủ công qua WebSocket khi lịch và quota thiết bị đều hợp lệ -> mở khóa máy
+        agent.execCmd(UrgentCmd(cmd_type = CommandType.UNLOCK))
+        assert agent.is_manual_locked is False
+        assert agent.status_cur == "active"
+        assert agent.device_block_reason == BlockReason.NONE
+
+        #3.Khóa thủ công qua kênh Heartbeat (pending_commands): dùng chung ngữ nghĩa và giữ khóa qua các nhịp Heartbeat kế tiếp
+        agent.HeartbeatResponseHanlder(HeartbeatResponse(
+            latest_policy_version = 1 ,
+            pending_commands = ["1730000100:lock"] ,
+            device_unlocked_until = agent.device_unlocked_until
+        ))
+        assert agent.is_manual_locked is True
+        assert agent.status_cur == "locked"
+        assert agent.device_block_reason == BlockReason.POLICY
+        assert "1730000100:lock" in agent.acked_commands
+
+        #Nhịp Heartbeat tiếp theo (không còn lệnh mới) chạy lại applyPolicy nhưng không được ghi đè khóa thủ công
+        agent.HeartbeatResponseHanlder(HeartbeatResponse(
+            latest_policy_version = 1 ,
+            pending_commands = [] ,
+            device_unlocked_until = agent.device_unlocked_until
+        ))
+        assert agent.is_manual_locked is True
+        assert agent.status_cur == "locked"
+        assert agent.device_block_reason == BlockReason.POLICY
+
+        #4.Gỡ khóa thủ công (UNLOCK) nhưng thiết bị đã hết hạn DEVICE_QUOTA -> không được bỏ qua DEVICE_QUOTA
+        agent.device_unlocked_until = int(time.time()) - 30
+        agent.HeartbeatResponseHanlder(HeartbeatResponse(
+            latest_policy_version = 1 ,
+            pending_commands = ["1730000200:unlock"] ,
+            device_unlocked_until = 0
+        ))
+        assert agent.is_manual_locked is False
+        assert agent.status_cur == "locked"
+        assert agent.device_block_reason == BlockReason.DEVICE_QUOTA
+
+        #5.Khóa thủ công khi đang ngoài khung giờ SCHEDULE, sau đó UNLOCK -> phải giữ nguyên khóa do SCHEDULE
+        agent.device_unlocked_until = int(time.time()) + 1800
+        agent.cur_policy.schedule_7x48 = [[False] * 48 for _ in range(7)]
+        agent.execCmd(UrgentCmd(cmd_type = CommandType.LOCK))
+        assert agent.status_cur == "locked"
+        assert agent.device_block_reason == BlockReason.POLICY
+
+        agent.execCmd(UrgentCmd(cmd_type = CommandType.UNLOCK))
+        assert agent.is_manual_locked is False
+        assert agent.status_cur == "locked"
+        assert agent.device_block_reason == BlockReason.SCHEDULE
+
+        #Khi khung giờ SCHEDULE cho phép trở lại -> thiết bị mới chuyển sang active
+        agent.cur_policy.schedule_7x48 = [[True] * 48 for _ in range(7)]
+        agent.applyPolicy()
+        assert agent.status_cur == "active"
+        assert agent.device_block_reason == BlockReason.NONE
+
+
+def test_sub_time_negative_adjustment_and_policy_update_c2() :
+    parent_tok = uuid.uuid4().hex
+    os.environ["PARENT_TOKEN"] = parent_tok
+    dev_id = "di_c2_test"
+    acc_tok = "at_c2_test"
+    plc_id = "plcid_c2_test"
+    server.device_tokens[dev_id] = acc_tok
+    server.device_unlocked_store[dev_id] = int(time.time()) + 3600
+    server.app_bonus_store[dev_id] = {}
+    server.web_bonus_store[dev_id] = {}
+
+    server.policies_store[plc_id] = Policy(
+        policy_id = plc_id ,
+        policy_version = 1 ,
+        weekday_quota = 3600 ,
+        weekend_quota = 7200 ,
+        schedule_7x48 = [[True] * 48 for _ in range(7)] ,
+        app_rules = [
+            AppRule(exe_name = "roblox.exe" , sha256 = "b" * 64 , allowed = True , quota = 600) ,
+        ] ,
+        domain_rules = [
+            DomainRule(domain = "youtube.com" , category = DomainCategory.ENTERTAINMENT , allowed = True , quota = 600) ,
+        ] ,
+        signature = "unsigned"
+    )
+
+    agent.cur_policy = server.policies_store[plc_id].model_copy(deep = True)
+    agent.cur_policy_version = 1
+    agent.quota_used = {"roblox.exe" : 100 , "youtube.com" : 100}
+    agent.app_bonus_time = {}
+    agent.web_bonus_time = {}
+    agent.is_manual_locked = False
+    agent.device_unlocked_until = int(time.time()) + 3600
+
+    with patch("agent.psutil.process_iter" , return_value = []) :
+        #1.SUB_TIME vượt bonus hiện có (0s) khiến adjustment âm (-250s) và trừ trực tiếp vào ngân sách quota gốc
+        agent.execCmd(UrgentCmd(
+            cmd_type = CommandType.SUB_TIME ,
+            target_type = TargetType.APP ,
+            subject = "roblox.exe" ,
+            sub_time = 250
+        ))
+        agent.execCmd(UrgentCmd(
+            cmd_type = CommandType.SUB_TIME ,
+            target_type = TargetType.WEB ,
+            subject = "youtube.com" ,
+            sub_time = 250
+        ))
+        assert agent.app_bonus_time["roblox.exe"] == -250
+        assert agent.web_bonus_time["youtube.com"] == -250
+        #remain = max(0, 600 + (-250) - 100) = 250
+        assert agent.getAppRemainingQuota("roblox.exe") == 250
+        assert agent.getWebRemainingQuota("youtube.com") == 250
+        assert agent.app_block_reasons["roblox.exe"] == BlockReason.NONE
+        assert agent.domain_block_reasons["youtube.com"] == BlockReason.NONE
+
+        #2.SUB_TIME vượt toàn bộ phần còn lại -> adjustment tiếp tục giảm (-650s), nhưng remain được chặn ở 0 (không âm)
+        agent.execCmd(UrgentCmd(
+            cmd_type = CommandType.SUB_TIME ,
+            target_type = TargetType.APP ,
+            subject = "roblox.exe" ,
+            sub_time = 400
+        ))
+        agent.execCmd(UrgentCmd(
+            cmd_type = CommandType.SUB_TIME ,
+            target_type = TargetType.WEB ,
+            subject = "youtube.com" ,
+            sub_time = 400
+        ))
+        assert agent.app_bonus_time["roblox.exe"] == -650
+        assert agent.web_bonus_time["youtube.com"] == -650
+        assert agent.getAppRemainingQuota("roblox.exe") == 0
+        assert agent.getWebRemainingQuota("youtube.com") == 0
+        assert agent.app_block_reasons["roblox.exe"] == BlockReason.APP_QUOTA
+        assert agent.domain_block_reasons["youtube.com"] == BlockReason.WEB_QUOTA
+        assert "youtube.com" in agent.blocked_domains
+
+        #3.ADD_TIME sau khi adjustment đang âm (-650 + 300 = -350): tính lại chính xác remain = max(0, 600 - 350 - 100) = 150
+        agent.execCmd(UrgentCmd(
+            cmd_type = CommandType.ADD_TIME ,
+            target_type = TargetType.APP ,
+            subject = "roblox.exe" ,
+            bonus_time = 300
+        ))
+        agent.execCmd(UrgentCmd(
+            cmd_type = CommandType.ADD_TIME ,
+            target_type = TargetType.WEB ,
+            subject = "youtube.com" ,
+            bonus_time = 300
+        ))
+        assert agent.app_bonus_time["roblox.exe"] == -350
+        assert agent.web_bonus_time["youtube.com"] == -350
+        assert agent.getAppRemainingQuota("roblox.exe") == 150
+        assert agent.getWebRemainingQuota("youtube.com") == 150
+        assert agent.app_block_reasons["roblox.exe"] == BlockReason.NONE
+        assert agent.domain_block_reasons["youtube.com"] == BlockReason.NONE
+        assert "youtube.com" not in agent.blocked_domains
+
+        #4.Policy cập nhật tăng/giảm quota: giữ nguyên adjustment (-350) và used_time (100), không mất hoặc tính trùng used_time
+        updated_policy_high = Policy(
+            policy_id = plc_id ,
+            policy_version = 2 ,
+            weekday_quota = 3600 ,
+            weekend_quota = 7200 ,
+            schedule_7x48 = [[True] * 48 for _ in range(7)] ,
+            app_rules = [
+                AppRule(exe_name = "roblox.exe" , sha256 = "b" * 64 , allowed = True , quota = 900) ,
+            ] ,
+            domain_rules = [
+                DomainRule(domain = "youtube.com" , category = DomainCategory.ENTERTAINMENT , allowed = True , quota = 900) ,
+            ] ,
+            signature = "unsigned"
+        )
+        with patch("agent.requestPolicy" , return_value = updated_policy_high) :
+            agent.HeartbeatResponseHanlder(HeartbeatResponse(latest_policy_version = 2))
+        assert agent.quota_used == {"roblox.exe" : 100 , "youtube.com" : 100}
+        assert agent.app_bonus_time["roblox.exe"] == -350
+        assert agent.web_bonus_time["youtube.com"] == -350
+        #remain = max(0, 900 - 350 - 100) = 450
+        assert agent.getAppRemainingQuota("roblox.exe") == 450
+        assert agent.getWebRemainingQuota("youtube.com") == 450
+
+        updated_policy_low = Policy(
+            policy_id = plc_id ,
+            policy_version = 3 ,
+            weekday_quota = 3600 ,
+            weekend_quota = 7200 ,
+            schedule_7x48 = [[True] * 48 for _ in range(7)] ,
+            app_rules = [
+                AppRule(exe_name = "roblox.exe" , sha256 = "b" * 64 , allowed = True , quota = 400) ,
+            ] ,
+            domain_rules = [
+                DomainRule(domain = "youtube.com" , category = DomainCategory.ENTERTAINMENT , allowed = True , quota = 400) ,
+            ] ,
+            signature = "unsigned"
+        )
+        with patch("agent.requestPolicy" , return_value = updated_policy_low) :
+            agent.HeartbeatResponseHanlder(HeartbeatResponse(latest_policy_version = 3))
+        assert agent.quota_used == {"roblox.exe" : 100 , "youtube.com" : 100}
+        assert agent.app_bonus_time["roblox.exe"] == -350
+        assert agent.web_bonus_time["youtube.com"] == -350
+        #remain = max(0, 400 - 350 - 100) = 0
+        assert agent.getAppRemainingQuota("roblox.exe") == 0
+        assert agent.getWebRemainingQuota("youtube.com") == 0
+        assert agent.app_block_reasons["roblox.exe"] == BlockReason.APP_QUOTA
+        assert agent.domain_block_reasons["youtube.com"] == BlockReason.WEB_QUOTA
+
+        #5.Kiểm tra Server persistence & Heartbeat sync bảo toàn adjustment âm cho cả APP và WEB
+        runSyncCoro(server.sendUrgentCmd(
+            dev_id ,
+            UrgentCmd(cmd_type = CommandType.SUB_TIME , target_type = TargetType.APP , subject = "roblox.exe" , sub_time = 200) ,
+            parent_token = parent_tok
+        ))
+        runSyncCoro(server.sendUrgentCmd(
+            dev_id ,
+            UrgentCmd(cmd_type = CommandType.SUB_TIME , target_type = TargetType.WEB , subject = "youtube.com" , sub_time = 200) ,
+            parent_token = parent_tok
+        ))
+        server.loadQuotaState()
+        assert server.app_bonus_store[dev_id]["roblox.exe"] == -200
+        assert server.web_bonus_store[dev_id]["youtube.com"] == -200
+
+        hb_resp = server.responseHeartbeat(HeartbeatRequest(
+            device_id = dev_id ,
+            access_token = acc_tok ,
+            policy_id = plc_id ,
+            status_cur = "active" ,
+            quota_used = agent.quota_used ,
+            cur_policy_version = 3 ,
+            acked_commands = []
+        ))
+        agent.HeartbeatResponseHanlder(hb_resp)
+        assert agent.app_bonus_time["roblox.exe"] == -200
+        assert agent.web_bonus_time["youtube.com"] == -200
+
+    if server.QUOTA_STATE_FILE.exists() :
+        server.QUOTA_STATE_FILE.unlink()
+
+
+def test_device_quota_daily_cycle_and_zero_handling_c3() :
+    parent_tok = uuid.uuid4().hex
+    os.environ["PARENT_TOKEN"] = parent_tok
+    now_ts = int(time.time())
+    server.curCode = PairingCode(
+        pairing_code = "87654321" ,
+        created_at = now_ts ,
+        expires_at = now_ts + 600
+    )
+
+    enroll_data = server.responseEnroll(
+        EnrollmentRequest(pairing_code = "87654321" , device_fingerprint = "fp_c3_device")
+    )
+    dev_id = enroll_data.device_id
+    acc_tok = enroll_data.access_token
+    plc_id = enroll_data.policy_id
+    today_str = server.getTodayDateStr()
+
+    agent.cur_policy = server.policies_store[plc_id].model_copy(deep = True)
+    agent.cur_policy_version = 1
+    agent.quota_used = {}
+    agent.app_bonus_time = {}
+    agent.web_bonus_time = {}
+    agent.is_manual_locked = False
+    agent.device_unlocked_until = server.device_unlocked_store[dev_id]
+    agent.device_quota_date = today_str
+
+    with patch("agent.psutil.process_iter" , return_value = []) :
+        #1.DEVICE hết quota (cả khi quá hạn thông thường lẫn khi SUB_TIME đưa device_unlocked_until == 0) -> phải giữ khóa trong cùng ngày
+        runSyncCoro(server.sendUrgentCmd(
+            dev_id ,
+            UrgentCmd(cmd_type = CommandType.SUB_TIME , target_type = TargetType.DEVICE , sub_time = 7200) ,
+            parent_token = parent_tok
+        ))
+        agent.execCmd(UrgentCmd(cmd_type = CommandType.SUB_TIME , target_type = TargetType.DEVICE , sub_time = 7200))
+        assert agent.status_cur == "locked"
+        assert agent.device_block_reason == BlockReason.DEVICE_QUOTA
+
+        #Trường hợp SUB_TIME lớn đưa device_unlocked_until chạm mốc 0 -> không được tự cấp lại quota
+        full_sub = server.device_unlocked_store[dev_id] + 100
+        runSyncCoro(server.sendUrgentCmd(
+            dev_id ,
+            UrgentCmd(cmd_type = CommandType.SUB_TIME , target_type = TargetType.DEVICE , sub_time = full_sub) ,
+            parent_token = parent_tok
+        ))
+        agent.execCmd(UrgentCmd(cmd_type = CommandType.SUB_TIME , target_type = TargetType.DEVICE , sub_time = full_sub))
+        assert server.device_unlocked_store[dev_id] == 0
+        assert agent.device_unlocked_until == 0
+        assert agent.status_cur == "locked"
+        assert agent.device_block_reason == BlockReason.DEVICE_QUOTA
+
+        #Gọi lại applyPolicy nhiều lần trong cùng ngày khi device_unlocked_until == 0 không được tự cấp lại quota
+        agent.applyPolicy()
+        assert agent.device_unlocked_until == 0
+        assert agent.status_cur == "locked"
+        assert agent.device_block_reason == BlockReason.DEVICE_QUOTA
+
+        #2.Server restart trong cùng ngày (loadQuotaState) -> khôi phục đúng trạng thái hết quota (0), không cấp lại
+        server.device_unlocked_store.clear()
+        server.device_quota_date_store.clear()
+        server.loadQuotaState()
+        assert server.device_unlocked_store[dev_id] == 0
+        assert server.device_quota_date_store[dev_id] == today_str
+
+        #3.Agent restart trong cùng ngày (RAM về 0 / rỗng) -> cả trước và sau Heartbeat đều không tự cấp lại quota
+        agent.device_unlocked_until = 0
+        agent.device_quota_date = ""
+        agent.applyPolicy()
+        assert agent.device_unlocked_until == 0
+        assert agent.status_cur == "locked"
+        assert agent.device_block_reason == BlockReason.DEVICE_QUOTA
+
+        #Ngay cả khi Agent có giá trị cũ khác 0 trước đó, Heartbeat từ Server trả về 0 vẫn đồng bộ khóa máy chính xác
+        agent.device_unlocked_until = int(time.time()) + 1800
+        hb_same_day = server.responseHeartbeat(HeartbeatRequest(
+            device_id = dev_id ,
+            access_token = acc_tok ,
+            policy_id = plc_id ,
+            status_cur = "locked" ,
+            quota_used = {} ,
+            cur_policy_version = 1 ,
+            acked_commands = []
+        ))
+        assert hb_same_day.device_unlocked_until == 0
+        assert hb_same_day.device_quota_date == today_str
+        agent.HeartbeatResponseHanlder(hb_same_day)
+        assert agent.device_unlocked_until == 0
+        assert agent.status_cur == "locked"
+        assert agent.device_block_reason == BlockReason.DEVICE_QUOTA
+
+        #4.Qua ngày mới (00:00 -> ngày lịch mới): DEVICE được cấp lại quota theo Policy hiện tại (trên cả Agent và Server)
+        yesterday_str = "2026-10-31"
+        new_day_str = "2026-11-01"
+        agent.device_unlocked_until = 0
+        agent.device_quota_date = yesterday_str
+        agent.applyPolicy()
+        assert agent.device_unlocked_until > int(time.time())
+        assert agent.device_quota_date == today_str
+        assert agent.status_cur == "active"
+
+        #Gọi lại applyPolicy trong cùng ngày mới chỉ giữ nguyên mốc vừa cấp, không reset lần thứ hai
+        agent_custom_until = agent.device_unlocked_until - 600
+        agent.device_unlocked_until = agent_custom_until
+        agent.applyPolicy()
+        assert agent.device_unlocked_until == agent_custom_until
+
+        server.device_unlocked_store[dev_id] = 0
+        server.device_quota_date_store[dev_id] = yesterday_str
+        server.saveQuotaState()
+        agent.device_unlocked_until = 0
+        agent.device_quota_date = yesterday_str
+
+        with patch("server.getTodayDateStr" , return_value = new_day_str) :
+            #Server khởi động / đồng bộ trong ngày mới -> reset DEVICE quota theo Policy
+            server.loadQuotaState()
+            first_new_day_until = server.device_unlocked_store[dev_id]
+            assert first_new_day_until > int(time.time())
+            assert server.device_quota_date_store[dev_id] == new_day_str
+
+            #5.Restart lần nữa sau 00:00 trong cùng ngày mới -> chỉ reset đúng 1 lần, bảo toàn quota đã trừ/sử dụng
+            reduced_until = first_new_day_until - 1200
+            server.device_unlocked_store[dev_id] = reduced_until
+            server.saveQuotaState()
+
+            server.device_unlocked_store.clear()
+            server.device_quota_date_store.clear()
+            server.loadQuotaState()
+            assert server.device_unlocked_store[dev_id] == reduced_until
+            assert server.device_quota_date_store[dev_id] == new_day_str
+
+            hb_new_day = server.responseHeartbeat(HeartbeatRequest(
+                device_id = dev_id ,
+                access_token = acc_tok ,
+                policy_id = plc_id ,
+                status_cur = "locked" ,
+                quota_used = {} ,
+                cur_policy_version = 1 ,
+                acked_commands = []
+            ))
+            assert hb_new_day.device_unlocked_until == reduced_until
+            assert hb_new_day.device_quota_date == new_day_str
+            agent.HeartbeatResponseHanlder(hb_new_day)
+            assert agent.device_unlocked_until == reduced_until
+            assert agent.device_quota_date == new_day_str
+            assert agent.status_cur == "active"
+            assert agent.device_block_reason == BlockReason.NONE
+
+    if server.QUOTA_STATE_FILE.exists() :
+        server.QUOTA_STATE_FILE.unlink()
+    if agent.AGENT_STATE_FILE.exists() :
+        agent.AGENT_STATE_FILE.unlink()
+
+
+def test_clock_monotonic_elapsed_tamper_and_reboot_recovery_c3() :
+    agent.cur_policy = Policy(
+        policy_id = "plcid_clock_c3" ,
+        policy_version = 1 ,
+        weekday_quota = 3600 ,
+        weekend_quota = 7200 ,
+        schedule_7x48 = [[True] * 48 for _ in range(7)] ,
+        app_rules = [] ,
+        domain_rules = [] ,
+        signature = "unsigned"
+    )
+    agent.cur_policy_version = 1
+    agent.quota_used = {}
+    agent.device_quota_used = 0.0
+    agent.event_buffer.clear()
+    agent.is_manual_locked = False
+
+    base_wall = 1793520000.0
+    base_mono = 10000.0
+    cur_wall = [base_wall]
+    cur_mono = [base_mono]
+
+    with (
+        patch("agent.psutil.process_iter" , return_value = []) ,
+        patch("agent.time.time" , side_effect = lambda : cur_wall[0]) ,
+        patch("agent.time.monotonic" , side_effect = lambda : cur_mono[0]) ,
+        patch("agent.getWindowsInputInfo" , return_value = (1000 , 0.0)) ,
+    ) :
+        agent.device_quota_date = agent.getTodayDateStr()
+        agent.device_unlocked_until = int(cur_wall[0]) + 1800
+        agent._last_synced_unlocked_until = 0
+        agent.last_input_mono = cur_mono[0]
+        agent.applyPolicy()
+        assert agent.device_remaining_sec == 1800.0
+        assert agent.status_cur == "active"
+
+        #1.Đo elapsed time bằng monotonic clock: chỉnh wall clock tăng/giảm nhỏ không làm sai lệch thời gian sử dụng
+        cur_mono[0] += 120.0
+        cur_wall[0] += 300.0
+        agent.last_input_mono = cur_mono[0]
+        agent.applyPolicy()
+        assert agent.device_quota_used == 120.0
+        assert agent.device_remaining_sec == 1680.0
+
+        #2.Lùi đồng hồ hệ thống 3 giờ (-10800s): quota không được tăng trở lại và sự kiện clock_tamper phải được ghi nhận
+        cur_mono[0] += 60.0
+        cur_wall[0] -= 10800.0
+        agent.last_input_mono = cur_mono[0]
+        agent.applyPolicy()
+        assert agent.device_quota_used == 180.0
+        assert agent.device_remaining_sec == 1620.0
+        assert any(ev.subject == "clock_tamper" and ev.type == EventType.QUOTA_WARNING for ev in agent.event_buffer)
+
+        #3.Recovery sau reboot: khi monotonic clock của OS reset về số nhỏ (5.0 < 10180.0), không dùng mốc monotonic cũ sai cách
+        agent.saveAgentQuotaState()
+        cur_mono[0] = 5.0
+        cur_wall[0] += 30.0
+        agent.loadAgentQuotaState()
+        agent.applyPolicy()
+        assert agent.device_remaining_sec == 1620.0
+        assert agent.device_quota_used == 180.0
+
+        #Sau khi reboot, tiếp tục sử dụng 20s trên mốc monotonic mới -> trừ chính xác 20s (còn 1600s)
+        cur_mono[0] = 25.0
+        cur_wall[0] += 20.0
+        agent.last_input_mono = cur_mono[0]
+        agent.applyPolicy()
+        assert agent.device_remaining_sec == 1600.0
+        assert agent.device_quota_used == 200.0
+
+    if agent.AGENT_STATE_FILE.exists() :
+        agent.AGENT_STATE_FILE.unlink()
+
+
+def test_idle_active_state_transitions_and_quota_accounting_c3() :
+    agent.cur_policy = Policy(
+        policy_id = "plcid_idle_c3" ,
+        policy_version = 1 ,
+        weekday_quota = 3600 ,
+        weekend_quota = 7200 ,
+        schedule_7x48 = [[True] * 48 for _ in range(7)] ,
+        app_rules = [] ,
+        domain_rules = [] ,
+        signature = "unsigned"
+    )
+    agent.cur_policy_version = 1
+    agent.quota_used = {}
+    agent.device_quota_used = 0.0
+    agent.is_manual_locked = False
+
+    cur_wall = [1793520000.0]
+    cur_mono = [5000.0]
+    win_tick = [1000]
+
+    with (
+        patch("agent.psutil.process_iter" , return_value = []) ,
+        patch("agent.time.time" , side_effect = lambda : cur_wall[0]) ,
+        patch("agent.time.monotonic" , side_effect = lambda : cur_mono[0]) ,
+        patch("agent.getWindowsInputInfo" , side_effect = lambda : (win_tick[0] , 0.0)) ,
+    ) :
+        agent.device_quota_date = agent.getTodayDateStr()
+        agent.device_unlocked_until = int(cur_wall[0]) + 1800
+        agent._last_synced_unlocked_until = 0
+        agent.last_input_mono = None
+        agent._last_win_input_tick = None
+
+        #1.Có input -> trạng thái Active ngay lập tức
+        agent.recordUserInput()
+        assert agent.status_cur == "active"
+        assert agent.device_remaining_sec == 1800.0
+
+        #Sử dụng Active trong 100s (có thao tác chuột/phím mới ở giây thứ 100) -> tiêu thụ đúng 100s
+        cur_mono[0] += 100.0
+        cur_wall[0] += 100.0
+        win_tick[0] += 100000
+        agent.recordUserInput()
+        assert agent.status_cur == "active"
+        assert agent.device_quota_used == 100.0
+        assert agent.device_remaining_sec == 1700.0
+
+        #2.Không có input quá 5 phút (305s >= 300s) -> chuyển sang Idle
+        cur_mono[0] += 305.0
+        cur_wall[0] += 305.0
+        agent.applyPolicy()
+        assert agent.status_cur == "idle"
+        assert agent.device_quota_used == 100.0
+        assert agent.device_remaining_sec == 1700.0
+
+        #3.Đang ở trạng thái Idle thêm 600s -> không tiêu thụ quota
+        cur_mono[0] += 600.0
+        cur_wall[0] += 600.0
+        agent.applyPolicy()
+        assert agent.status_cur == "idle"
+        assert agent.device_quota_used == 100.0
+        assert agent.device_remaining_sec == 1700.0
+
+        #4.Có input trở lại sau Idle -> chuyển sang Active ngay lập tức (không có khoảng trễ xác nhận), không mất/trùng quota cũ
+        win_tick[0] += 5000
+        agent.recordUserInput()
+        assert agent.status_cur == "active"
+        assert agent.device_quota_used == 100.0
+        assert agent.device_remaining_sec == 1700.0
+
+        #Tiếp tục Active thêm 50s rồi khóa máy -> chốt đúng 50s Active trước khi khóa (tổng 150s, còn 1650s)
+        cur_mono[0] += 50.0
+        cur_wall[0] += 50.0
+        agent.execCmd(UrgentCmd(cmd_type = CommandType.LOCK))
+        assert agent.status_cur == "locked"
+        assert agent.device_block_reason == BlockReason.POLICY
+        assert agent.device_quota_used == 150.0
+        assert agent.device_remaining_sec == 1650.0
+
+        #5.Máy bị khóa -> không tiêu thụ quota bất kể có thao tác input mới
+        cur_mono[0] += 400.0
+        cur_wall[0] += 400.0
+        win_tick[0] += 20000
+        agent.recordUserInput()
+        assert agent.status_cur == "locked"
+        assert agent.device_quota_used == 150.0
+        assert agent.device_remaining_sec == 1650.0
+
+        #6.Gỡ khóa máy rồi dùng thêm 30s Active -> chuyển đổi trạng thái không làm mất hoặc tính trùng thời gian (150 + 30 = 180s)
+        agent.execCmd(UrgentCmd(cmd_type = CommandType.UNLOCK))
+        assert agent.status_cur == "active"
+        assert agent.device_quota_used == 150.0
+        assert agent.device_remaining_sec == 1650.0
+
+        cur_mono[0] += 30.0
+        cur_wall[0] += 30.0
+        agent.applyPolicy()
+        assert agent.status_cur == "active"
+        assert agent.device_quota_used == 180.0
+        assert agent.device_remaining_sec == 1620.0
