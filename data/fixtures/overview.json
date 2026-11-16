@@ -1,0 +1,100 @@
+{
+  "parent_name": "Mẹ",
+  "pending_requests_count": 2,
+  "integrity_alerts": [
+    {
+      "id": "alert-clock-1",
+      "device_name": "PC-Bi",
+      "child_name": "Bé Bi",
+      "type": "clock_tampered",
+      "severity": "warn",
+      "detected_at": "10 phút trước (21:45)",
+      "message": "Đồng hồ hệ thống trên máy PC-Bi vừa bị chỉnh lùi 45 giây. Hệ thống giữ nguyên thời gian còn lại theo bộ đếm độc lập."
+    },
+    {
+      "id": "alert-offline-2",
+      "device_name": "Laptop-Bong",
+      "child_name": "Bé Bống",
+      "type": "offline_notice",
+      "severity": "warn",
+      "detected_at": "2 ngày trước",
+      "message": "Máy Laptop-Bong đang ngoại tuyến 2 ngày. Luật đã lưu trên máy sẽ hết hạn cảnh báo sau 5 ngày nữa."
+    }
+  ],
+  "children": [
+    {
+      "id": "child-bi",
+      "name": "Bé Bi",
+      "age": 9,
+      "device_id": "di_pc_bi",
+      "device_name": "PC-Bi",
+      "online": true,
+      "status": "online",
+      "status_label": "Đang dùng",
+      "last_seen": "Cập nhật 20 giây trước",
+      "used_min": 52,
+      "base_quota_min": 90,
+      "bonus_min": 0,
+      "effective_quota_min": 90,
+      "game_used_min": 20,
+      "game_quota_min": 45,
+      "applied_policy_version": 12,
+      "latest_policy_version": 12,
+      "policy_signature_valid": true,
+      "last_command": {
+        "seq": 14,
+        "state": "applied",
+        "label": "Đã áp dụng (2 giây)",
+        "detail": "Lệnh #14 đã được máy PC-Bi xác nhận ACK"
+      }
+    },
+    {
+      "id": "child-bong",
+      "name": "Bé Bống",
+      "age": 7,
+      "device_id": "di_laptop_bong",
+      "device_name": "Laptop-Bong",
+      "online": false,
+      "status": "offline",
+      "status_label": "Đang tắt máy",
+      "last_seen": "Cập nhật 2 ngày trước",
+      "used_min": 35,
+      "base_quota_min": 60,
+      "bonus_min": 15,
+      "effective_quota_min": 75,
+      "game_used_min": 10,
+      "game_quota_min": 30,
+      "applied_policy_version": 11,
+      "latest_policy_version": 12,
+      "policy_signature_valid": true,
+      "last_command": {
+        "seq": 8,
+        "state": "queued",
+        "label": "Đã xếp hàng (Sẽ áp dụng ngay khi máy bật mạng)",
+        "detail": "Chờ máy Laptop-Bong kết nối lại"
+      }
+    }
+  ],
+  "pending_requests": [
+    {
+      "id": "req-101",
+      "child_id": "child-bi",
+      "child_name": "Bé Bi",
+      "kind": "add_time",
+      "minutes": 15,
+      "summary": "Bé Bi xin thêm 15 phút",
+      "reason": "Con đang làm nốt bài tập Toán trên VioEdu ạ",
+      "requested_at": "3 phút trước"
+    },
+    {
+      "id": "req-102",
+      "child_id": "child-bi",
+      "child_name": "Bé Bi",
+      "kind": "unblock_domain",
+      "domain": "scratch.mit.edu",
+      "summary": "Con nghĩ trang scratch.mit.edu bị chặn nhầm",
+      "reason": "Trang thực hành Tin học ở trường cô giao về nhà",
+      "requested_at": "12 phút trước"
+    }
+  ]
+}

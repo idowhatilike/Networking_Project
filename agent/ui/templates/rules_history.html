@@ -1,0 +1,42 @@
+{% extends "base_kid.html" %}
+{% from "components/macros.html" import card, status_badge, data_table %}
+
+{% block title %}Luật đang áp dụng &amp; Nhật ký thay đổi — OpenGuard Kids{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Luật đang áp dụng &amp; Nhật ký thay đổi</h1>
+      <p class="page-subtitle">
+        Mọi quy tắc và lần điều chỉnh của Bố/Mẹ đều được giải thích rõ ràng bằng lời dễ hiểu (NT4, NT5).
+      </p>
+    </div>
+  </div>
+
+  {% call card(
+    title="Quy tắc hiện tại của " ~ kid.child_name,
+    subtitle="Được tóm tắt thành câu dễ hiểu để em chủ động sắp xếp thời gian"
+  ) %}
+    <ul>
+      {% for line in kid.rules_plain_language %}
+      <li>{{ line }}</li>
+      {% endfor %}
+    </ul>
+  {% endcall %}
+
+  {% call card(
+    title="Nhật ký thay đổi quy tắc gần đây",
+    subtitle="Hiển thị người thay đổi, thời gian và nội dung điều chỉnh (đã ẩn địa chỉ IP để bảo mật)"
+  ) %}
+    {% call data_table(["Thời điểm", "Người điều chỉnh", "Mục thay đổi", "Giải thích thay đổi"]) %}
+      {% for item in audit_items %}
+      <tr>
+        <td data-label="Thời điểm">{{ item.ts }}</td>
+        <td data-label="Người điều chỉnh">{{ status_badge('ok', item.actor) }}</td>
+        <td data-label="Mục thay đổi"><strong>{{ item.action_label }}</strong></td>
+        <td data-label="Giải thích">{{ item.diff_summary }}</td>
+      </tr>
+      {% endfor %}
+    {% endcall %}
+  {% endcall %}
+{% endblock %}

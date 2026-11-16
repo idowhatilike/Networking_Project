@@ -1,0 +1,29 @@
+{% from "components/macros.html" import status_badge %}
+<tr
+  id="kid-req-{{ r.id }}"
+  {% if r.status == 'pending' %}
+  hx-get="/kid/requests/{{ r.id }}/status"
+  hx-trigger="every 3s"
+  hx-swap="outerHTML"
+  {% endif %}
+>
+  <td data-label="Thời điểm">{{ r.requested_at }}</td>
+  <td data-label="Loại yêu cầu"><strong>{{ r.kind_label }}</strong></td>
+  <td data-label="Nội dung"><code>{{ r.subject }}</code> — {{ r.reason }}</td>
+  <td data-label="Tiến trình">
+    {% if r.status == 'pending' %}
+      {{ status_badge('pending', r.status_step) }}
+    {% elif r.status == 'approved' %}
+      {{ status_badge('ok', r.status_step) }}
+    {% else %}
+      {{ status_badge('warn', r.status_step) }}
+    {% endif %}
+  </td>
+  <td data-label="Lời nhắn của Bố/Mẹ">
+    {% if r.parent_message %}
+      <strong>“{{ r.parent_message }}”</strong>
+    {% else %}
+      <span class="ogk-card-subtitle">Đang chờ Bố/Mẹ phản hồi...</span>
+    {% endif %}
+  </td>
+</tr>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="{{ theme or 'parent' }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="csrf-token" content="{{ csrf_token or 'ogk-dev-csrf-token' }}">
+  <title>{% block title %}OpenGuard Kids — Công cụ đồng hành cùng con{% endblock %}</title>
+  <link rel="stylesheet" href="/static/shared/tokens.css">
+  <link rel="stylesheet" href="/static/vendor/pico.min.css">
+  <link rel="stylesheet" href="/static/shared/components.css">
+  <link rel="stylesheet" href="/static/css/base.css">
+</head>
+<body>
+  <header class="app-topbar">
+    <div class="app-topbar-inner">
+      <a href="/" class="brand-link">
+        <span class="brand-mark" aria-hidden="true">OGK</span>
+        <span>OpenGuard Kids</span>
+      </a>
+      {% if not hide_nav %}
+      <div class="topbar-user">
+        <span>Chào <strong>{{ parent_name or 'Mẹ' }}</strong></span>
+        <form method="post" action="/logout" class="inline-form">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token or 'ogk-dev-csrf-token' }}">
+          <button type="submit" class="btn btn-secondary btn-sm">Đăng xuất</button>
+        </form>
+      </div>
+      {% endif %}
+    </div>
+  </header>
+
+  {% if hide_nav %}
+  <main class="auth-container">
+    <div id="toast-area" aria-live="polite">
+      {% block auth_toast %}{% endblock %}
+    </div>
+    {% block auth_content %}{% endblock %}
+  </main>
+  {% else %}
+  <div class="app-shell">
+    <aside class="app-sidebar" aria-label="Điều hướng chính">
+      <nav>
+        <ul class="sidebar-nav">
+          <li>
+            <a href="/" class="sidebar-link {% if active_nav == 'overview' %}sidebar-link-active{% endif %}">
+              <span>Tổng quan</span>
+            </a>
+          </li>
+          <li>
+            <a href="/children" class="sidebar-link {% if active_nav == 'children' %}sidebar-link-active{% endif %}">
+              <span>Hồ sơ của con</span>
+            </a>
+          </li>
+          <li>
+            <a href="/requests" class="sidebar-link {% if active_nav == 'requests' %}sidebar-link-active{% endif %}">
+              <span>Yêu cầu của con</span>
+              {% if pending_requests_count %}
+              <span class="nav-badge">{{ pending_requests_count }}</span>
+              {% endif %}
+            </a>
+          </li>
+          <li>
+            <a href="/devices" class="sidebar-link {% if active_nav == 'devices' %}sidebar-link-active{% endif %}">
+              <span>Thiết bị</span>
+            </a>
+          </li>
+          <li>
+            <a href="/audit" class="sidebar-link {% if active_nav == 'audit' %}sidebar-link-active{% endif %}">
+              <span>Nhật ký thay đổi</span>
+            </a>
+          </li>
+          <li>
+            <a href="/settings" class="sidebar-link {% if active_nav == 'settings' %}sidebar-link-active{% endif %}">
+              <span>Cài đặt</span>
+            </a>
+          </li>
+          <li>
+            <a href="/privacy" class="sidebar-link {% if active_nav == 'privacy' %}sidebar-link-active{% endif %}">
+              <span>Quyền riêng tư</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+
+    <main class="app-main">
+      <div id="toast-area" aria-live="polite">
+        {% block toast %}{% endblock %}
+      </div>
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+
+  <nav class="mobile-bottom-nav" aria-label="Điều hướng trên điện thoại">
+    <a href="/" class="mobile-nav-item {% if active_nav == 'overview' %}mobile-nav-item-active{% endif %}">
+      <span>Tổng quan</span>
+    </a>
+    <a href="/children" class="mobile-nav-item {% if active_nav == 'children' %}mobile-nav-item-active{% endif %}">
+      <span>Hồ sơ con</span>
+    </a>
+    <a href="/requests" class="mobile-nav-item {% if active_nav == 'requests' %}mobile-nav-item-active{% endif %}">
+      <span>Yêu cầu {% if pending_requests_count %}({{ pending_requests_count }}){% endif %}</span>
+    </a>
+    <a href="/devices" class="mobile-nav-item {% if active_nav == 'devices' %}mobile-nav-item-active{% endif %}">
+      <span>Thiết bị</span>
+    </a>
+  </nav>
+  {% endif %}
+
+  <footer class="app-footer">
+    <span>OpenGuard Kids · Công cụ đồng hành minh bạch cùng con, không theo dõi lén.</span>
+    <span>Chúng tôi chỉ ghi nhận tên ứng dụng, tên miền cấp hai và thời lượng sử dụng (<a href="/privacy">Chính sách quyền riêng tư</a>).</span>
+  </footer>
+
+  <script src="/static/vendor/htmx.min.js"></script>
+  <script src="/static/js/app.js"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

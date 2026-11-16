@@ -1,0 +1,104 @@
+{% from "components/macros.html" import status_badge, progress, confirm_dialog, command_chip %}
+<article
+  id="child-card-{{ child.id }}"
+  class="ogk-card"
+  hx-get="/partials/children/{{ child.id }}/card"
+  hx-trigger="every 30s"
+  hx-swap="outerHTML"
+>
+  <div class="ogk-card-header">
+    <div>
+      <h2 class="ogk-card-title">{{ child.name }}, {{ child.age }} tuổi</h2>
+      <p class="ogk-card-subtitle">{{ child.device_name }} · {{ child.last_seen }}</p>
+    </div>
+    {{ status_badge(child.status, child.status_label) }}
+  </div>
+
+  <div class="child-meta-row">
+    <span>
+      Luật đang áp dụng: <strong>v{{ child.applied_policy_version }}</strong>
+      (mới nhất: <strong>v{{ child.latest_policy_version }}</strong>)
+    </span>
+    {% if child.policy_signature_valid %}
+      {{ status_badge('ok', 'Chữ ký HMAC hợp lệ') }}
+    {% else %}
+      {{ status_badge('danger', 'Sai chữ ký chính sách') }}
+    {% endif %}
+  </div>
+
+  {{ progress(
+    value=child.used_min,
+    max_val=child.effective_quota_min,
+    label="Thời gian dùng máy hôm nay",
+    unit="phút",
+    variant="warn" if child.used_min >= child.effective_quota_min else "default"
+  ) }}
+
+  {{ progress(
+    value=child.game_used_min,
+    max_val=child.game_quota_min,
+    label="Nhóm Trò chơi",
+    unit="phút"
+  ) }}
+
+  {% if child.last_command %}
+  <div class="progress-block">
+    {{ command_chip(
+      chip_id="cmd-chip-" ~ child.id,
+      state=child.last_command.state,
+      label=child.last_command.label,
+      detail=child.last_command.detail,
+      is_online=child.online
+    ) }}
+  </div>
+  {% endif %}
+
+  <div class="ogk-card-footer">
+    <div class="quick-actions">
+      <button
+        type="button"
+        class="btn btn-danger btn-sm"
+        data-open-modal="modal-lock-{{ child.id }}"
+      >Khóa ngay</button>
+
+      <form
+        hx-post="/children/{{ child.id }}/commands"
+        hx-target="#cmd-chip-{{ child.id }}"
+        hx-swap="outerHTML"
+        class="inline-form"
+      >
+        <input type="hidden" name="cmd_type" value="add_time">
+        <input type="hidden" name="minutes" value="15">
+        <button type="submit" class="btn btn-sm">+15 phút</button>
+      </form>
+
+      <button
+        type="button"
+        class="btn btn-outline btn-sm"
+        data-open-modal="modal-unlock-{{ child.id }}"
+      >Mở khóa</button>
+    </div>
+
+    <a href="/children/{{ child.id }}" class="btn btn-secondary btn-sm">Chi tiết →</a>
+  </div>
+
+  {{ confirm_dialog(
+    dialog_id="modal-lock-" ~ child.id,
+    title="Xác nhận khóa máy " ~ child.device_name,
+    message="Máy của " ~ child.name ~ " sẽ chuyển sang màn hình nghỉ ngơi ngay khi nhận lệnh. Con vẫn có thể bấm nút Xin thêm giờ hoặc xem số khẩn cấp 111.",
+    action_url="/children/" ~ child.id ~ "/commands",
+    cmd_value="lock",
+    target_id="cmd-chip-" ~ child.id,
+    confirm_label="Đồng ý khóa ngay"
+  ) }}
+
+  {{ confirm_dialog(
+    dialog_id="modal-unlock-" ~ child.id,
+    title="Xác nhận mở khóa máy " ~ child.device_name,
+    message="Gỡ khóa thủ công cho máy của " ~ child.name ~ " để con tiếp tục sử dụng trong khung giờ cho phép.",
+    action_url="/children/" ~ child.id ~ "/commands",
+    cmd_value="unlock",
+    target_id="cmd-chip-" ~ child.id,
+    confirm_label="Đồng ý mở khóa"
+  ) }}
+</article>

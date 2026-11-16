@@ -1,0 +1,97 @@
+{# Bảng ánh xạ chính sách quyền riêng tư dùng chung từ PRIVACY.md (NT2, NT5, F3) #}
+{% from "components/macros.html" import card, status_badge, data_table %}
+
+{% call card(
+  title="Nguyên tắc cốt lõi: Tối thiểu dữ liệu (NT2) & Minh bạch hai chiều (NT5)",
+  subtitle="Mọi trường dữ liệu không giải thích được mục đích đều bị loại bỏ khỏi cơ sở dữ liệu"
+) %}
+  <div class="stats-grid">
+    <div class="ogk-stat">
+      <div class="ogk-stat-label">Tuyệt đối KHÔNG thu thập</div>
+      <div>
+        {{ status_badge('danger', 'Không lưu URL đầy đủ') }}
+        {{ status_badge('danger', 'Không lưu tiêu đề cửa sổ') }}
+        {{ status_badge('danger', 'Không chụp màn hình / bàn phím') }}
+      </div>
+    </div>
+    <div class="ogk-stat">
+      <div class="ogk-stat-label">Thời hạn lưu trữ tự động (TTL)</div>
+      <div class="ogk-stat-value">90 <span class="ogk-stat-unit">ngày (hoặc xóa ngay khi phụ huynh bấm xóa)</span></div>
+    </div>
+  </div>
+{% endcall %}
+
+{% call card(
+  title="1. Bảng ánh xạ lược đồ sự kiện (events — Đúng 7 trường nghiệp vụ + khóa chống trùng)",
+  subtitle="Trẻ em và phụ huynh đều xem được cùng bộ dữ liệu này"
+) %}
+  {% call data_table(["Trường dữ liệu", "Kiểu dữ liệu", "Mục đích thu thập", "Thời hạn lưu", "Ai được xem"]) %}
+    <tr>
+      <td data-label="Trường"><code>idempotency_key</code></td>
+      <td data-label="Kiểu"><code>UUID / TEXT</code></td>
+      <td data-label="Mục đích">Chống trùng lặp sự kiện khi đồng bộ ngoại tuyến (offline batch sync).</td>
+      <td data-label="Thời hạn">90 ngày</td>
+      <td data-label="Ai xem">Hệ thống nội bộ</td>
+    </tr>
+    <tr>
+      <td data-label="Trường"><code>ts</code></td>
+      <td data-label="Kiểu"><code>INTEGER</code></td>
+      <td data-label="Mục đích">Xác định thời điểm xảy ra sự kiện để thống kê theo ngày/tuần.</td>
+      <td data-label="Thời hạn">90 ngày</td>
+      <td data-label="Ai xem">Phụ huynh, Trẻ em (<code>child-view</code>)</td>
+    </tr>
+    <tr>
+      <td data-label="Trường"><code>device_id</code></td>
+      <td data-label="Kiểu"><code>TEXT</code></td>
+      <td data-label="Mục đích">Định danh thiết bị phát sinh sự kiện (1 phụ huynh : n trẻ : m thiết bị).</td>
+      <td data-label="Thời hạn">90 ngày</td>
+      <td data-label="Ai xem">Phụ huynh, Trẻ em (<code>child-view</code>)</td>
+    </tr>
+    <tr>
+      <td data-label="Trường"><code>child_id</code></td>
+      <td data-label="Kiểu"><code>TEXT</code></td>
+      <td data-label="Mục đích">Gắn kết hoạt động và hạn mức (quota) với hồ sơ của từng trẻ.</td>
+      <td data-label="Thời hạn">90 ngày</td>
+      <td data-label="Ai xem">Phụ huynh, Trẻ em (<code>child-view</code>)</td>
+    </tr>
+    <tr>
+      <td data-label="Trường"><code>type</code></td>
+      <td data-label="Kiểu"><code>ENUM (9 loại)</code></td>
+      <td data-label="Mục đích">Phân loại trong 9 sự kiện: <code>app_start</code>, <code>app_stop</code>, <code>domain_query</code>, <code>blocked_app</code>, <code>blocked_domain</code>, <code>quota_warning</code>, <code>locked</code>, <code>unlock_request</code>, <code>override_granted</code>.</td>
+      <td data-label="Thời hạn">90 ngày</td>
+      <td data-label="Ai xem">Phụ huynh, Trẻ em (<code>child-view</code>)</td>
+    </tr>
+    <tr>
+      <td data-label="Trường"><code>subject</code></td>
+      <td data-label="Kiểu"><code>TEXT</code></td>
+      <td data-label="Mục đích">Tên tệp thực thi (<code>code.exe</code>) hoặc tên miền cấp hai (<code>vioedu.vn</code>) phục vụ thống kê Top 10 và giải thích lý do chặn.</td>
+      <td data-label="Thời hạn">90 ngày</td>
+      <td data-label="Ai xem">Phụ huynh, Trẻ em (<code>child-view</code>)</td>
+    </tr>
+    <tr>
+      <td data-label="Trường"><code>duration_sec</code></td>
+      <td data-label="Kiểu"><code>INTEGER</code></td>
+      <td data-label="Mục đích">Thời lượng sử dụng thực tế (giây, trừ thời gian khóa máy và nghỉ &gt; 5 phút).</td>
+      <td data-label="Thời hạn">90 ngày</td>
+      <td data-label="Ai xem">Phụ huynh, Trẻ em (<code>child-view</code>)</td>
+    </tr>
+    <tr>
+      <td data-label="Trường"><code>policy_id</code></td>
+      <td data-label="Kiểu"><code>TEXT</code></td>
+      <td data-label="Mục đích">Tham chiếu phiên bản chính sách đã áp dụng để giải thích lý do chặn (NT4).</td>
+      <td data-label="Thời hạn">90 ngày</td>
+      <td data-label="Ai xem">Phụ huynh, Trẻ em (<code>child-view</code>)</td>
+    </tr>
+  {% endcall %}
+{% endcall %}
+
+{% call card(
+  title="2. Nhật ký kiểm toán (audit_logs) & Cơ chế xóa dữ liệu tức thời",
+  subtitle="Đảm bảo quyền được biết và quyền xóa dữ liệu của gia đình"
+) %}
+  <ul>
+    <li><strong>Bảng <code>audit_logs</code>:</strong> Ghi nhận mọi thay đổi chính sách để trẻ và phụ huynh cùng giám sát (trên màn hình của trẻ, địa chỉ IP của phụ huynh được ẩn để bảo vệ an toàn).</li>
+    <li><strong>Tự động hết hạn (TTL 90 ngày):</strong> Tự động xóa vĩnh viễn các bản ghi <code>events</code> và <code>audit_logs</code> cũ hơn 90 ngày.</li>
+    <li><strong>Xóa tức thời (“Xóa toàn bộ dữ liệu của con tôi”):</strong> Xóa ngay toàn bộ bản ghi trên máy chủ và đẩy lệnh xóa bộ đệm cục bộ (kèm <code>VACUUM</code>) xuống máy tính của trẻ.</li>
+  </ul>
+{% endcall %}

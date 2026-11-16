@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% from "components/macros.html" import card, status_badge, data_table, toast %}
+
+{% block title %}Cài đặt & Xóa dữ liệu — OpenGuard Kids{% endblock %}
+
+{% block toast %}
+  {{ toast(notice) }}
+{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Cài đặt gia đình & Quyền dữ liệu</h1>
+      <p class="page-subtitle">Quản lý thời hạn lưu trữ 90 ngày, bản ghi đồng ý Nghị định 13 và xóa dữ liệu tức thời</p>
+    </div>
+  </div>
+
+  {% if error %}
+  <div class="form-error" role="alert">{{ error }}</div>
+  {% endif %}
+
+  {% if delete_progress %}
+  {% call card(
+    title="Tiến độ xóa dữ liệu của " ~ delete_progress.child_name,
+    subtitle="Đã thực thi lệnh xóa trên cả máy chủ và đẩy lệnh xóa bộ đệm xuống thiết bị của con"
+  ) %}
+    <div class="stats-grid">
+      <div class="ogk-stat">
+        <div class="ogk-stat-label">1. Cơ sở dữ liệu Máy chủ (OGK-Server)</div>
+        <div>{{ status_badge('ok', 'Máy chủ: [Đã xóa sạch 100% sự kiện]') }}</div>
+      </div>
+      <div class="ogk-stat">
+        <div class="ogk-stat-label">2. Bộ đệm trên máy con ({{ delete_progress.device_name }})</div>
+        <div>
+          {% if delete_progress.online %}
+            {{ status_badge('ok', delete_progress.device_name ~ ': [Đã xóa & VACUUM]') }}
+          {% else %}
+            {{ status_badge('warn', delete_progress.device_name ~ ': Đang chờ máy online') }}
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  {% endcall %}
+  {% endif %}
+
+  {% call card(
+    title="1. Chính sách tự động xóa dữ liệu (Data Retention TTL)",
+    subtitle="Đảm bảo nguyên tắc tối thiểu dữ liệu (NT2 và F3)"
+  ) %}
+    <p>
+      Toàn bộ sự kiện hoạt động (<code>events</code>) và nhật ký kiểm toán (<code>audit_logs</code>)
+      cũ hơn <strong>90 ngày</strong> sẽ tự động được xóa vĩnh viễn trên cả Máy chủ và máy của con.
+    </p>
+    {{ status_badge('ok', 'Tự động xóa sau 90 ngày: Đang hoạt động') }}
+  {% endcall %}
+
+  {% call card(
+    title="2. Bản ghi đồng ý bảo vệ dữ liệu cá nhân (Nghị định 13/2023/NĐ-CP — Chỉ đọc)",
+    subtitle="Lưu vết xác nhận hợp pháp khi phụ huynh ghép đôi thiết bị của con"
+  ) %}
+    {% call data_table(["Hồ sơ con", "Thiết bị", "Người xác nhận", "Phiên bản văn bản", "Thời điểm", "Địa chỉ IP"]) %}
+      {% for rec in consent_records %}
+      <tr>
+        <td data-label="Con"><strong>{{ rec.child_name }}</strong></td>
+        <td data-label="Thiết bị">{{ rec.device_name }}</td>
+        <td data-label="Phụ huynh">{{ rec.parent_name }}</td>
+        <td data-label="Phiên bản"><code>{{ rec.consent_version }}</code></td>
+        <td data-label="Thời điểm">{{ rec.consented_at }}</td>
+        <td data-label="IP"><code>{{ rec.ip }}</code></td>
+      </tr>
+      {% endfor %}
+    {% endcall %}
+  {% endcall %}
+
+  {% call card(
+    title="3. Vùng nguy hiểm — Xóa toàn bộ dữ liệu của con tôi (F3)",
+    subtitle="Xóa ngay lập tức mọi lịch sử hoạt động của con trên Máy chủ và bộ đệm trên máy tính của con"
+  ) %}
+    <form method="post" action="/settings/delete-child-data" class="range-form-grid">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token or 'ogk-dev-csrf-token' }}">
+      <div>
+        <label for="delete-child-select">Chọn hồ sơ của con</label>
+        <select id="delete-child-select" name="child_id" required>
+          {% for c in children_list %}
+          <option value="{{ c.id }}">{{ c.name }} ({{ c.device_name }})</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <label for="confirm-child-name">Gõ đúng tên của con để xác nhận (ví dụ: Bé Bi)</label>
+        <input
+          id="confirm-child-name"
+          type="text"
+          name="confirm_name"
+          placeholder="Nhập đúng tên con..."
+          required
+        >
+      </div>
+      <div>
+        <button type="submit" class="btn btn-danger">Xóa toàn bộ dữ liệu của con tôi</button>
+      </div>
+    </form>
+  {% endcall %}
+{% endblock %}

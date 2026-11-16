@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="kid">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Thông báo chặn trang web — OpenGuard Kids</title>
+  <link rel="stylesheet" href="/static/shared/tokens.css">
+  <link rel="stylesheet" href="/static/vendor/pico.min.css">
+  <link rel="stylesheet" href="/static/shared/components.css">
+  <link rel="stylesheet" href="/static/css/base.css">
+  <link rel="stylesheet" href="/kid-static/kid.css">
+</head>
+<body>
+  <main class="kid-shell">
+    <section class="kid-hero-card" aria-labelledby="port80-title">
+      <div class="ogk-card-header">
+        <div>
+          <span class="ogk-badge ogk-badge-warn">OpenGuard Kids · Cổng thông báo HTTP cục bộ</span>
+          <h1 id="port80-title" class="page-title">
+            {% if is_blocked %}
+              Trang web {{ host_domain }} đang tạm chặn
+            {% else %}
+              Trang này không thuộc luật chặn nào
+            {% endif %}
+          </h1>
+        </div>
+      </div>
+
+      {% if is_blocked %}
+        <p>
+          <strong>Lý do giải thích (NT4):</strong> {{ rule_info.reason }}
+        </p>
+        <div class="stats-grid">
+          <div class="ogk-stat">
+            <div class="ogk-stat-label">Tên miền truy cập</div>
+            <div><code>{{ host_domain }}</code></div>
+          </div>
+          <div class="ogk-stat">
+            <div class="ogk-stat-label">Nhóm nội dung</div>
+            <div><strong>{{ rule_info.category_label }}</strong></div>
+          </div>
+          <div class="ogk-stat">
+            <div class="ogk-stat-label">Người đặt &amp; Ngày áp dụng</div>
+            <div><strong>{{ rule_info.set_by }} · {{ rule_info.set_at }} (Luật #{{ rule_info.rule_id }})</strong></div>
+          </div>
+        </div>
+      {% else %}
+        <p>
+          Tên miền <code>{{ host_domain }}</code> hiện không nằm trong danh sách tạm chặn của OpenGuard Kids.
+        </p>
+      {% endif %}
+
+      <div class="alert-banner" role="note">
+        <div>
+          <strong>💡 Em muốn xin mở trang này?</strong>
+          <span>
+            Hãy bấm biểu tượng <strong>OpenGuard</strong> ở khay hệ thống góc dưới màn hình › chọn
+            <strong>“Con nghĩ trang này bị chặn nhầm”</strong> để gửi lời nhắn cho Bố/Mẹ nhé.
+          </span>
+        </div>
+        <a href="/kid/requests?kind=unblock_domain&amp;subject={{ host_domain }}" class="btn">
+          Mở trang gửi phản hồi
+        </a>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

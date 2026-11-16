@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% from "components/macros.html" import status_badge, toast %}
+
+{% block title %}Báo cáo của {{ child.name }} — OpenGuard Kids{% endblock %}
+
+{% block toast %}
+  {{ toast(notice) }}
+{% endblock %}
+
+{% block content %}
+  {% include "partials/child_tabs_nav.html" %}
+
+  <div class="schedule-summary-bar">
+    <div class="quick-actions">
+      <a
+        href="/children/{{ child.id }}/reports?range=today&view={{ view_mode }}"
+        class="btn btn-sm {% if range_key != 'today' %}btn-secondary{% endif %}"
+      >Hôm nay</a>
+      <a
+        href="/children/{{ child.id }}/reports?range=7d&view={{ view_mode }}"
+        class="btn btn-sm {% if range_key != '7d' %}btn-secondary{% endif %}"
+      >7 ngày qua</a>
+    </div>
+
+    <div class="quick-actions">
+      {% if view_mode == 'kid' %}
+        {{ status_badge('neutral', 'Chế độ: Hôm nay em đã dùng gì (Như con thấy)') }}
+        <a
+          href="/children/{{ child.id }}/reports?range={{ range_key }}&view=parent"
+          class="btn btn-outline btn-sm"
+        >Quay về chế độ Phụ huynh</a>
+      {% else %}
+        <a
+          href="/children/{{ child.id }}/reports?range={{ range_key }}&view=kid"
+          class="btn btn-outline btn-sm"
+        >👁 Xem như con thấy (NT5)</a>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if view_mode == 'kid' %}
+  <div class="alert-banner">
+    <div>
+      <strong>🌟 Hôm nay em đã dùng gì:</strong>
+      <span>Đây chính là màn hình báo cáo mà {{ child.name }} nhìn thấy trên máy tính của mình (cùng một nguồn số liệu với bố mẹ theo nguyên tắc NT5).</span>
+    </div>
+  </div>
+  {% endif %}
+
+  {% include "report_content.html" %}
+{% endblock %}
+
+{% block scripts %}
+  <script src="/static/vendor/chart.umd.min.js"></script>
+{% endblock %}

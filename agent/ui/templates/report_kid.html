@@ -1,0 +1,43 @@
+{% extends "base_kid.html" %}
+{% from "components/macros.html" import status_badge %}
+
+{% block title %}Hôm nay em đã dùng gì — OpenGuard Kids{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Hôm nay em đã dùng gì ({{ kid.child_name }})</h1>
+      <p class="page-subtitle">
+        Minh bạch hai chiều (NT5): Em và Bố/Mẹ cùng nhìn thấy đúng một bảng thống kê này.
+      </p>
+    </div>
+    <div class="quick-actions">
+      <a
+        href="/kid/report?range=today"
+        class="btn {% if range_key == 'today' %}{% else %}btn-outline{% endif %}"
+      >
+        Hôm nay
+      </a>
+      <a
+        href="/kid/report?range=7d"
+        class="btn {% if range_key == '7d' %}{% else %}btn-outline{% endif %}"
+      >
+        7 ngày qua
+      </a>
+    </div>
+  </div>
+
+  <div class="alert-banner" role="status">
+    <div>
+      <strong>🌱 Góc tự rèn luyện của em:</strong>
+      <span>Xem lại thời gian học tập và giải trí giúp em tự cân bằng thời gian mỗi ngày.</span>
+    </div>
+    {{ status_badge('ok', 'Cùng nguồn dữ liệu với Bố/Mẹ') }}
+  </div>
+
+  {% include "report_content.html" %}
+{% endblock %}
+
+{% block scripts %}
+  <script src="/static/vendor/chart.umd.min.js"></script>
+{% endblock %}

@@ -1,0 +1,121 @@
+/* Giao diện thân thiện dành cho trẻ 6–11 tuổi (chữ >= 18px, bo tròn 20px, màu dịu) */
+
+[data-theme='kid'] body {
+  font-size: 1.125rem;
+  line-height: 1.6;
+  background-color: #F0FDF4;
+}
+
+.kid-shell {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 1.25rem 1rem 4rem;
+}
+
+.kid-tray-bar {
+  background: var(--c-surface);
+  border-bottom: 2px solid var(--c-primary-soft);
+  padding: 0.75rem 1rem;
+  position: sticky;
+  top: 0;
+  z-index: 25;
+}
+
+.kid-tray-inner {
+  max-width: 920px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.kid-nav-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.kid-nav-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  background: var(--c-bg);
+  color: var(--c-text);
+  border: 1px solid var(--c-border);
+  text-decoration: none;
+}
+
+.kid-nav-pill:hover {
+  background: var(--c-primary-soft);
+  color: var(--c-primary);
+  text-decoration: none;
+}
+
+.kid-nav-pill-active {
+  background: var(--c-primary);
+  color: #FFFFFF;
+  border-color: var(--c-primary);
+}
+
+.kid-hero-card {
+  background: var(--c-surface);
+  border: 2px solid var(--c-primary-soft);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow-md);
+}
+
+.kid-big-time {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--c-primary);
+  line-height: 1.2;
+  margin: 0.5rem 0;
+}
+
+.kid-grace-box {
+  background: var(--c-warn-soft);
+  border: 2px solid var(--c-warn);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  margin: 1rem 0;
+  text-align: center;
+}
+
+.kid-grace-timer {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: var(--c-warn);
+}
+
+.lock-overlay-screen {
+  background: #0F172A;
+  color: #F8FAFC;
+  border-radius: var(--radius);
+  padding: 2rem 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-md);
+}
+
+.lock-overlay-card {
+  background: #FFFFFF;
+  color: var(--c-text);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  margin-top: 1.25rem;
+}
+
+.nt6-emergency-box {
+  background: var(--c-primary-soft);
+  border: 2px solid var(--c-primary);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  margin-top: 1.25rem;
+}

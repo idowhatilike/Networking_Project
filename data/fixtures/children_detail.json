@@ -1,0 +1,282 @@
+{
+  "children": {
+    "child-bi": {
+      "id": "child-bi",
+      "name": "Bé Bi",
+      "age": 9,
+      "device_id": "di_pc_bi",
+      "device_name": "PC-Bi",
+      "online": true,
+      "status": "online",
+      "status_label": "Đang dùng",
+      "last_seen": "Cập nhật 20 giây trước",
+      "timezone": "Asia/Ho_Chi_Minh",
+      "applied_policy_version": 12,
+      "latest_policy_version": 12,
+      "policy_signature_valid": true,
+      "used_min": 52,
+      "base_quota_min": 90,
+      "bonus_min": 0,
+      "effective_quota_min": 90,
+      "weekday_quota_min": 90,
+      "weekend_quota_min": 120,
+      "category_budgets": {
+        "gaming": 45,
+        "entertainment": 45,
+        "education": 0
+      },
+      "recent_activities": [
+        {
+          "time": "21:40",
+          "type": "app_start",
+          "type_label": "Mở ứng dụng",
+          "subject": "code.exe",
+          "duration_min": 25,
+          "note": "Học lập trình Scratch & Python"
+        },
+        {
+          "time": "21:25",
+          "type": "domain_query",
+          "type_label": "Truy cập web",
+          "subject": "vioedu.vn",
+          "duration_min": 18,
+          "note": "Nhóm Giáo dục · Cho phép"
+        },
+        {
+          "time": "21:10",
+          "type": "blocked_domain",
+          "type_label": "Chặn tên miền",
+          "subject": "roblox.com",
+          "duration_min": 0,
+          "note": "Theo luật #14 do Mẹ đặt ngày 12/11 (Nhóm Trò chơi)"
+        },
+        {
+          "time": "21:00",
+          "type": "quota_warning",
+          "type_label": "Nhắc giờ",
+          "subject": "Còn 30 phút sử dụng",
+          "duration_min": 0,
+          "note": "Hiển thị thông báo nhẹ ở khay hệ thống"
+        }
+      ],
+      "schedule_strings": [
+        "000000000000000000000000000000000000001111000000",
+        "000000000000000000000000000000000000001111000000",
+        "000000000000000000000000000000000000001111000000",
+        "000000000000000000000000000000000000001111000000",
+        "000000000000000000000000000000000000001111000000",
+        "000000000000000011111100000011110000001111000000",
+        "000000000000000011111100000011110000001111000000"
+      ],
+      "schedule_ranges": [
+        {
+          "id": "rng-1",
+          "days_label": "Thứ 2 – Thứ 6",
+          "start": "19:00",
+          "end": "21:00"
+        },
+        {
+          "id": "rng-2",
+          "days_label": "Thứ 7 – Chủ nhật",
+          "start": "08:00",
+          "end": "11:00"
+        },
+        {
+          "id": "rng-3",
+          "days_label": "Thứ 7 – Chủ nhật",
+          "start": "14:00",
+          "end": "16:00"
+        }
+      ],
+      "apps": [
+        {
+          "exe_name": "scratch-desktop.exe",
+          "display_name": "Scratch Desktop",
+          "sha256": "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+          "sha256_short": "9f86d081",
+          "category": "Giáo dục",
+          "allowed": true,
+          "quota_min": 0,
+          "set_by": "Mẹ",
+          "set_at": "10/11/2026"
+        },
+        {
+          "exe_name": "robloxplayerbeta.exe",
+          "display_name": "Roblox Player",
+          "sha256": "4b227777d4dd1fc61c6f884f48641d02b4d121d3fd328cb08b5531fcacdabf8a",
+          "sha256_short": "4b227777",
+          "category": "Trò chơi",
+          "allowed": false,
+          "quota_min": 30,
+          "set_by": "Mẹ",
+          "set_at": "12/11/2026"
+        },
+        {
+          "exe_name": "msedge.exe",
+          "display_name": "Microsoft Edge",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "sha256_short": "e3b0c442",
+          "category": "Trình duyệt",
+          "allowed": true,
+          "quota_min": 60,
+          "set_by": "Bố",
+          "set_at": "11/11/2026"
+        }
+      ],
+      "observed_apps": [
+        {
+          "exe_name": "anki.exe",
+          "display_name": "Anki Flashcards (anki.exe)",
+          "sha256": "1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b",
+          "sha256_short": "1a2b3c4d",
+          "last_seen": "Hôm nay, 20:15"
+        },
+        {
+          "exe_name": "minecraft.exe",
+          "display_name": "Minecraft Launcher (minecraft.exe)",
+          "sha256": "7f8e9d0c1b2a3f4e5d6c7b8a9f0e1d2c3b4a5f6e7d8c9b0a1f2e3d4c5b6a7f8e",
+          "sha256_short": "7f8e9d0c",
+          "last_seen": "Hôm qua, 19:40"
+        },
+        {
+          "exe_name": "vlc.exe",
+          "display_name": "VLC Media Player (vlc.exe)",
+          "sha256": "3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d",
+          "sha256_short": "3c4d5e6f",
+          "last_seen": "2 ngày trước"
+        }
+      ],
+      "web_settings": {
+        "safe_search": true,
+        "block_doh": true,
+        "categories": [
+          {
+            "key": "education",
+            "name": "Giáo dục & Học tập",
+            "allowed": true,
+            "desc": "Cổng trường học, từ điển, luyện Toán/Tiếng Anh, lập trình thiếu nhi"
+          },
+          {
+            "key": "entertainment",
+            "name": "Giải trí & Video",
+            "allowed": true,
+            "desc": "Xem hoạt hình, nghe nhạc, đọc truyện thiếu nhi trong hạn mức"
+          },
+          {
+            "key": "social",
+            "name": "Mạng xã hội & Nhắn tin",
+            "allowed": false,
+            "desc": "Các nền tảng mạng xã hội chưa phù hợp cho trẻ dưới 13 tuổi"
+          },
+          {
+            "key": "gaming",
+            "name": "Trò chơi trực tuyến",
+            "allowed": false,
+            "desc": "Web game và cổng tải trò chơi trực tuyến"
+          },
+          {
+            "key": "inappropriate",
+            "name": "Không phù hợp lứa tuổi",
+            "allowed": false,
+            "desc": "Nội dung người lớn, cờ bạc, bạo lực (luôn khuyến nghị chặn)"
+          },
+          {
+            "key": "uncategorized",
+            "name": "Chưa phân loại",
+            "allowed": true,
+            "desc": "Tên miền mới chưa nằm trong bộ danh mục phân loại sẵn"
+          }
+        ],
+        "domain_exceptions": [
+          {
+            "domain": "scratch.mit.edu",
+            "wildcard": "*.scratch.mit.edu",
+            "category_label": "Giáo dục",
+            "allowed": true,
+            "rule_id": "11",
+            "set_by": "Mẹ",
+            "set_at": "10/11/2026",
+            "reason": "Trang học lập trình kéo thả ở trường"
+          },
+          {
+            "domain": "roblox.com",
+            "wildcard": "*.roblox.com",
+            "category_label": "Trò chơi",
+            "allowed": false,
+            "rule_id": "14",
+            "set_by": "Mẹ",
+            "set_at": "12/11/2026",
+            "reason": "Tạm khóa trong tuần để tập trung ôn thi"
+          }
+        ],
+        "emergency_allowlist": [
+          "111 — Tổng đài Quốc gia Bảo vệ Trẻ em (miễn phí 24/7)",
+          "*.moet.gov.vn — Cổng thông tin Bộ Giáo dục và Đào tạo",
+          "*.edu.vn — Hệ thống cổng trường học trực tuyến"
+        ]
+      }
+    },
+    "child-bong": {
+      "id": "child-bong",
+      "name": "Bé Bống",
+      "age": 7,
+      "device_id": "di_laptop_bong",
+      "device_name": "Laptop-Bong",
+      "online": false,
+      "status": "offline",
+      "status_label": "Đang tắt máy",
+      "last_seen": "Cập nhật 2 ngày trước",
+      "timezone": "Asia/Ho_Chi_Minh",
+      "applied_policy_version": 11,
+      "latest_policy_version": 12,
+      "policy_signature_valid": true,
+      "used_min": 35,
+      "base_quota_min": 60,
+      "bonus_min": 15,
+      "effective_quota_min": 75,
+      "weekday_quota_min": 60,
+      "weekend_quota_min": 90,
+      "category_budgets": {
+        "gaming": 20,
+        "entertainment": 30,
+        "education": 0
+      },
+      "recent_activities": [],
+      "schedule_strings": [
+        "000000000000000000000000000000000000110000000000",
+        "000000000000000000000000000000000000110000000000",
+        "000000000000000000000000000000000000110000000000",
+        "000000000000000000000000000000000000110000000000",
+        "000000000000000000000000000000000000110000000000",
+        "000000000000000000111100000000110000000000000000",
+        "000000000000000000111100000000110000000000000000"
+      ],
+      "schedule_ranges": [
+        {
+          "id": "rng-b1",
+          "days_label": "Thứ 2 – Thứ 6",
+          "start": "18:00",
+          "end": "19:00"
+        },
+        {
+          "id": "rng-b2",
+          "days_label": "Thứ 7 – Chủ nhật",
+          "start": "09:00",
+          "end": "11:00"
+        }
+      ],
+      "apps": [],
+      "observed_apps": [],
+      "web_settings": {
+        "safe_search": true,
+        "block_doh": true,
+        "categories": [],
+        "domain_exceptions": [],
+        "emergency_allowlist": [
+          "111 — Tổng đài Quốc gia Bảo vệ Trẻ em (miễn phí 24/7)",
+          "*.edu.vn — Hệ thống cổng trường học trực tuyến"
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% from "components/macros.html" import card, stat, status_badge, progress, data_table, empty_state, toast %}
+
+{% block title %}Hôm nay của {{ child.name }} — OpenGuard Kids{% endblock %}
+
+{% block toast %}
+  {{ toast(notice) }}
+{% endblock %}
+
+{% block content %}
+  {% include "partials/child_tabs_nav.html" %}
+
+  {% set remaining_min = [0, child.effective_quota_min - child.used_min] | max %}
+  <div class="stats-grid">
+    {{ stat("Đã sử dụng hôm nay", child.used_min, "phút") }}
+    {{ stat("Hạn mức hiệu dụng", child.effective_quota_min, "phút") }}
+    {{ stat("Thời gian còn lại", remaining_min, "phút") }}
+    {{ stat("Phiên bản luật", "v" ~ child.applied_policy_version, "/ v" ~ child.latest_policy_version) }}
+  </div>
+
+  {% call card(
+    title="Tiến độ thời gian hôm nay",
+    subtitle="Hạn mức hiệu dụng = max(hạn mức gốc, đã dùng) + giờ thưởng thêm"
+  ) %}
+    {{ progress(
+      value=child.used_min,
+      max_val=child.effective_quota_min,
+      label="Tổng thời gian dùng máy",
+      unit="phút",
+      variant="warn" if remaining_min <= 10 else "default"
+    ) }}
+    <div id="cmd-chip-{{ child.id }}" class="progress-block">
+      {{ status_badge('neutral', 'Sẵn sàng nhận lệnh điều khiển') }}
+    </div>
+    <div class="quick-actions">
+      <form
+        hx-post="/children/{{ child.id }}/commands"
+        hx-target="#cmd-chip-{{ child.id }}"
+        hx-swap="outerHTML"
+        class="inline-form"
+      >
+        <input type="hidden" name="cmd_type" value="add_time">
+        <input type="hidden" name="minutes" value="15">
+        <button type="submit" class="btn btn-sm">+15 phút</button>
+      </form>
+      <form
+        hx-post="/children/{{ child.id }}/commands"
+        hx-target="#cmd-chip-{{ child.id }}"
+        hx-swap="outerHTML"
+        class="inline-form"
+      >
+        <input type="hidden" name="cmd_type" value="lock">
+        <button type="submit" class="btn btn-danger btn-sm">Khóa ngay</button>
+      </form>
+      <form
+        hx-post="/children/{{ child.id }}/commands"
+        hx-target="#cmd-chip-{{ child.id }}"
+        hx-swap="outerHTML"
+        class="inline-form"
+      >
+        <input type="hidden" name="cmd_type" value="unlock">
+        <button type="submit" class="btn btn-outline btn-sm">Mở khóa</button>
+      </form>
+    </div>
+  {% endcall %}
+
+  {% call card(
+    title="Hoạt động gần đây trong ngày",
+    subtitle="Chỉ hiển thị tên ứng dụng và tên miền cấp hai (NT2)"
+  ) %}
+    {% if child.recent_activities %}
+      {% call data_table(["Thời điểm", "Loại sự kiện", "Đối tượng (Subject)", "Thời lượng", "Ghi chú giải thích"]) %}
+        {% for act in child.recent_activities %}
+        <tr>
+          <td data-label="Thời điểm">{{ act.time }}</td>
+          <td data-label="Loại">
+            {% if act.type in ('blocked_domain', 'blocked_app') %}
+              {{ status_badge('danger', act.type_label) }}
+            {% elif act.type == 'quota_warning' %}
+              {{ status_badge('warn', act.type_label) }}
+            {% else %}
+              {{ status_badge('ok', act.type_label) }}
+            {% endif %}
+          </td>
+          <td data-label="Đối tượng"><strong>{{ act.subject }}</strong></td>
+          <td data-label="Thời lượng">
+            {% if act.duration_min > 0 %}{{ act.duration_min }} phút{% else %}—{% endif %}
+          </td>
+          <td data-label="Ghi chú">{{ act.note }}</td>
+        </tr>
+        {% endfor %}
+      {% endcall %}
+    {% else %}
+      {{ empty_state("Chưa có dữ liệu hôm nay", "Máy " ~ child.device_name ~ " chưa gửi hoạt động mới trong ngày.") }}
+    {% endif %}
+  {% endcall %}
+{% endblock %}

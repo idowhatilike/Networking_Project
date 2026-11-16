@@ -1,0 +1,110 @@
+{
+  "child_id": "child-bi",
+  "child_name": "Bé Bi",
+  "age": 9,
+  "device_name": "PC-Bi",
+  "online": true,
+  "using_cached_policy": false,
+  "cached_policy_days": 0,
+  "used_min": 52,
+  "effective_quota_min": 90,
+  "remaining_min": 38,
+  "next_open_time": "19:00",
+  "status_message": "OpenGuard Kids đang chạy để hỗ trợ em dùng máy",
+  "integrity_notice": "Giờ trên máy vừa thay đổi, nên thời gian còn lại không đổi.",
+  "warning_presets": {
+    "10": {
+      "minutes_left": 10,
+      "title": "Còn 10 phút dùng máy hôm nay",
+      "message": "Em chuẩn bị hoàn thành bài đang làm nhé. Nếu cần thêm thời gian học bài, em có thể bấm Xin thêm giờ.",
+      "grace_seconds": 0
+    },
+    "5": {
+      "minutes_left": 5,
+      "title": "Còn 5 phút dùng máy hôm nay",
+      "message": "Sắp đến giờ nghỉ ngơi rồi. Em nhớ lưu lại bài tập hoặc tài liệu đang mở nhé.",
+      "grace_seconds": 0
+    },
+    "1": {
+      "minutes_left": 1,
+      "title": "Còn 1 phút + 60 giây ân hạn",
+      "message": "Em hãy lưu bài nhé! Máy sẽ chuyển sang màn hình nghỉ ngơi sau khi hết thời gian ân hạn.",
+      "grace_seconds": 60
+    }
+  },
+  "blocked_examples": {
+    "app": {
+      "kind": "app",
+      "kind_label": "Ứng dụng tạm dừng",
+      "subject": "Roblox Player (robloxplayerbeta.exe)",
+      "rule_id": "14",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Nhóm Trò chơi đã hết hạn mức 20 phút hôm nay hoặc đang trong giờ học bài."
+    },
+    "web": {
+      "kind": "web",
+      "kind_label": "Trang web đang tạm chặn",
+      "subject": "roblox.com",
+      "rule_id": "14",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Theo luật #14 do Mẹ đặt ngày 12/11: Tạm khóa nhóm Trò chơi trong tuần để tập trung ôn thi."
+    }
+  },
+  "lock_overlay": {
+    "headline": "Giờ dùng máy hôm nay đã hết. Em có thể xin thêm giờ hoặc nghỉ ngơi nhé.",
+    "subheadline": "Máy nghỉ đến 19:00 tối nay",
+    "reason": "Đã dùng hết hạn mức 90 phút/ngày thường",
+    "set_by": "Mẹ",
+    "set_at": "10/11/2026",
+    "emergency_phone": "111 — Tổng đài Quốc gia Bảo vệ Trẻ em (miễn phí 24/7)",
+    "emergency_rescue": "113 (Công an) · 114 (Cứu hỏa) · 115 (Cấp cứu y tế)",
+    "exempt_school_domains": [
+      "*.edu.vn (Cổng trường học trực tuyến)",
+      "*.moet.gov.vn (Bộ Giáo dục và Đào tạo)",
+      "vioedu.vn (Hệ thống học Toán VioEdu)",
+      "scratch.mit.edu (Thực hành lập trình Scratch)"
+    ]
+  },
+  "rules_plain_language": [
+    "Ngày thường (Thứ 2 – Thứ 6): Em được dùng máy 90 phút trong khung giờ 19:00 – 21:00.",
+    "Cuối tuần (Thứ 7 – Chủ nhật): Em được dùng máy 120 phút vào buổi sáng (08:00 – 11:00) và chiều (14:00 – 16:00).",
+    "Các trang học tập (VioEdu, Scratch, từ điển) luôn được khuyến khích; nhóm Trò chơi tối đa 45 phút/ngày."
+  ],
+  "my_requests": [
+    {
+      "id": "req-101",
+      "kind": "add_time",
+      "kind_label": "Xin thêm 15 phút",
+      "subject": "+15 phút dùng máy",
+      "reason": "Con đang làm nốt bài tập Toán trên VioEdu ạ",
+      "requested_at": "3 phút trước",
+      "status": "pending",
+      "status_step": "Đã gửi → Đang chờ Bố/Mẹ xem",
+      "parent_message": ""
+    },
+    {
+      "id": "req-099",
+      "kind": "add_time",
+      "kind_label": "Xin thêm 15 phút",
+      "subject": "+15 phút dùng máy",
+      "reason": "Con muốn nghe nốt truyện cổ tích",
+      "requested_at": "Hôm qua, 20:10",
+      "status": "approved",
+      "status_step": "Bố/Mẹ đã đồng ý (+15 phút)",
+      "parent_message": "Được, 15 phút nhé. Nghe xong con đi đánh răng nhé!"
+    },
+    {
+      "id": "req-098",
+      "kind": "add_time",
+      "kind_label": "Xin thêm 30 phút",
+      "subject": "+30 phút dùng máy",
+      "reason": "Con muốn chơi thêm với bạn",
+      "requested_at": "13/11/2026",
+      "status": "denied",
+      "status_step": "Bố/Mẹ chưa đồng ý",
+      "parent_message": "Hôm nay đủ rồi, mai nhé con!"
+    }
+  ]
+}

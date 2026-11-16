@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% from "components/macros.html" import card, data_table, empty_state %}
+
+{% block title %}Nhật ký thay đổi (Audit Log) — OpenGuard Kids{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Nhật ký thay đổi chính sách</h1>
+      <p class="page-subtitle">Ghi nhận minh bạch mọi thay đổi luật để cả gia đình cùng theo dõi (NT5, F4)</p>
+    </div>
+    <div class="quick-actions">
+      <a href="/audit" class="btn btn-sm {% if child_filter %}btn-secondary{% endif %}">Tất cả các con</a>
+      <a href="/audit?child_id=child-bi" class="btn btn-sm {% if child_filter != 'child-bi' %}btn-secondary{% endif %}">Bé Bi</a>
+      <a href="/audit?child_id=child-bong" class="btn btn-sm {% if child_filter != 'child-bong' %}btn-secondary{% endif %}">Bé Bống</a>
+    </div>
+  </div>
+
+  {% call card(
+    title="Lịch sử thay đổi (" ~ (audit_items | length) ~ " bản ghi hiển thị)",
+    subtitle="Lưu ý: Màn hình phụ huynh hiển thị đầy đủ địa chỉ IP; màn hình của trẻ tự động ẩn cột IP này"
+  ) %}
+    {% if audit_items %}
+      {% call data_table(["Thời điểm", "Người thực hiện", "Địa chỉ IP", "Hồ sơ con", "Mục & Giá trị (Cũ → Mới)", "Diễn giải thân thiện"]) %}
+        {% for item in audit_items %}
+        <tr>
+          <td data-label="Thời điểm">{{ item.ts }}</td>
+          <td data-label="Ai"><strong>{{ item.who }}</strong></td>
+          <td data-label="IP"><code>{{ item.ip }}</code></td>
+          <td data-label="Con">{{ item.child_name }}</td>
+          <td data-label="Thay đổi">
+            <code>{{ item.field }}</code>: {{ item.old_val }} → <strong>{{ item.new_val }}</strong>
+          </td>
+          <td data-label="Diễn giải">{{ item.sentence }}</td>
+        </tr>
+        {% endfor %}
+      {% endcall %}
+
+      {% if next_cursor %}
+      <div class="ogk-card-footer">
+        <span class="ogk-card-subtitle">Còn bản ghi cũ hơn</span>
+        <a href="/audit?child_id={{ child_filter }}&cursor={{ next_cursor }}" class="btn btn-secondary btn-sm">
+          Tải thêm (Cursor: {{ next_cursor }}) →
+        </a>
+      </div>
+      {% endif %}
+    {% else %}
+      {{ empty_state("Chưa có bản ghi kiểm toán", "Mọi thay đổi về hạn mức, lịch tuần và luật chặn sẽ xuất hiện tại đây.") }}
+    {% endif %}
+  {% endcall %}
+{% endblock %}

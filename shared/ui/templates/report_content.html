@@ -1,0 +1,102 @@
+{# Mẫu báo cáo dùng chung cho cả Phụ huynh và Trẻ em (NT5: Xem như con thấy) #}
+{% from "components/macros.html" import card, stat, status_badge, progress, data_table, empty_state %}
+
+<div class="stats-grid">
+  {{ stat("Tổng thời gian đã dùng", report.total_used_min, "phút") }}
+  {{ stat("Tổng hạn mức kỳ này", report.quota_min, "phút") }}
+  {{ stat("Lần nhắc chặn ứng dụng", report.blocked_app_count, "lần") }}
+  {{ stat("Lần nhắc chặn website", report.blocked_domain_count, "lần") }}
+</div>
+
+{% call card(
+  title="Biểu đồ thời gian sử dụng theo nhóm nội dung (" ~ report.range_label ~ ")",
+  subtitle="Phân bổ số phút giữa Giáo dục, Giải trí và Trò chơi"
+) %}
+  <canvas
+    id="usage-chart-canvas"
+    class="ogk-report-chart"
+    height="110"
+    data-labels="{{ report.daily_series | map(attribute='day') | join(',') }}"
+    data-education="{{ report.daily_series | map(attribute='education_min') | join(',') }}"
+    data-entertainment="{{ report.daily_series | map(attribute='entertainment_min') | join(',') }}"
+    data-gaming="{{ report.daily_series | map(attribute='gaming_min') | join(',') }}"
+    aria-label="Biểu đồ cột thời gian sử dụng theo nhóm"
+  ></canvas>
+
+  <details open>
+    <summary>Xem bảng số liệu chi tiết thay thế biểu đồ</summary>
+    {% call data_table(["Ngày", "Giáo dục (phút)", "Giải trí (phút)", "Trò chơi (phút)"]) %}
+      {% for item in report.daily_series %}
+      <tr>
+        <td data-label="Ngày"><strong>{{ item.day }}</strong></td>
+        <td data-label="Giáo dục">{{ item.education_min }} phút</td>
+        <td data-label="Giải trí">{{ item.entertainment_min }} phút</td>
+        <td data-label="Trò chơi">{{ item.gaming_min }} phút</td>
+      </tr>
+      {% endfor %}
+    {% endcall %}
+  </details>
+{% endcall %}
+
+<div class="children-grid">
+  {% call card(
+    title="Top ứng dụng đã dùng",
+    subtitle="Tính theo số phút tương tác thực tế"
+  ) %}
+    {% if report.top_apps %}
+      {% for app_item in report.top_apps %}
+        {{ progress(
+          value=app_item.minutes,
+          max_val=report.total_used_min if report.total_used_min > 0 else 60,
+          label=app_item.subject ~ " (" ~ app_item.category ~ ")",
+          unit="phút"
+        ) }}
+      {% endfor %}
+    {% else %}
+      {{ empty_state("Chưa có dữ liệu ứng dụng", "Chưa ghi nhận ứng dụng nào trong khoảng thời gian này.") }}
+    {% endif %}
+  {% endcall %}
+
+  {% call card(
+    title="Top tên miền đã truy cập",
+    subtitle="Chỉ lưu tên miền cấp hai, không bao giờ lưu URL đầy đủ (NT2)"
+  ) %}
+    {% if report.top_domains %}
+      {% for dom_item in report.top_domains %}
+        {{ progress(
+          value=dom_item.minutes,
+          max_val=report.total_used_min if report.total_used_min > 0 else 60,
+          label=dom_item.subject ~ " (" ~ dom_item.category ~ ")",
+          unit="phút"
+        ) }}
+      {% endfor %}
+    {% else %}
+      {{ empty_state("Chưa có dữ liệu tên miền", "Chưa ghi nhận truy cập web trong khoảng thời gian này.") }}
+    {% endif %}
+  {% endcall %}
+</div>
+
+{% call card(
+  title="Các lần tạm chặn và giải thích lý do (NT4)",
+  subtitle="Cả bố mẹ và con đều nhìn thấy cùng một danh sách minh bạch"
+) %}
+  {% if report.blocked_events %}
+    {% call data_table(["Thời điểm", "Loại", "Đối tượng (Subject)", "Lý do và người đặt luật"]) %}
+      {% for ev in report.blocked_events %}
+      <tr>
+        <td data-label="Thời điểm">{{ ev.time }}</td>
+        <td data-label="Loại">{{ status_badge('warn', ev.type_label) }}</td>
+        <td data-label="Đối tượng"><code>{{ ev.subject }}</code></td>
+        <td data-label="Lý do">{{ ev.reason }}</td>
+      </tr>
+      {% endfor %}
+    {% endcall %}
+  {% else %}
+    {{ empty_state("Không có lần chặn nào", "Con đã sử dụng máy đúng theo các khung giờ và danh mục thống nhất.") }}
+  {% endif %}
+  <div class="ogk-card-footer">
+    <span class="ogk-card-subtitle">
+      🔒 Minh bạch hai chiều (NT2 & NT5): Chúng tôi chỉ ghi tên ứng dụng, tên miền và thời lượng.
+    </span>
+  </div>
+{% endcall %}

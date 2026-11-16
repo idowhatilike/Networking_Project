@@ -1,0 +1,2104 @@
+{
+  "domains": [
+    {
+      "domain": "dns.google",
+      "category": "doh_endpoint",
+      "category_label": "Điểm cuối DoH",
+      "allowed": false,
+      "rule_id": "DOH-01",
+      "set_by": "Hệ thống",
+      "set_at": "01/11/2026",
+      "reason": "Chặn DNS-over-HTTPS để chống vượt bộ lọc DNS cục bộ"
+    },
+    {
+      "domain": "cloudflare-dns.com",
+      "category": "doh_endpoint",
+      "category_label": "Điểm cuối DoH",
+      "allowed": false,
+      "rule_id": "DOH-01",
+      "set_by": "Hệ thống",
+      "set_at": "01/11/2026",
+      "reason": "Chặn DNS-over-HTTPS để chống vượt bộ lọc DNS cục bộ"
+    },
+    {
+      "domain": "mozilla.cloudflare-dns.com",
+      "category": "doh_endpoint",
+      "category_label": "Điểm cuối DoH",
+      "allowed": false,
+      "rule_id": "DOH-01",
+      "set_by": "Hệ thống",
+      "set_at": "01/11/2026",
+      "reason": "Chặn DNS-over-HTTPS để chống vượt bộ lọc DNS cục bộ"
+    },
+    {
+      "domain": "dns.quad9.net",
+      "category": "doh_endpoint",
+      "category_label": "Điểm cuối DoH",
+      "allowed": false,
+      "rule_id": "DOH-01",
+      "set_by": "Hệ thống",
+      "set_at": "01/11/2026",
+      "reason": "Chặn DNS-over-HTTPS để chống vượt bộ lọc DNS cục bộ"
+    },
+    {
+      "domain": "doh.opendns.com",
+      "category": "doh_endpoint",
+      "category_label": "Điểm cuối DoH",
+      "allowed": false,
+      "rule_id": "DOH-01",
+      "set_by": "Hệ thống",
+      "set_at": "01/11/2026",
+      "reason": "Chặn DNS-over-HTTPS để chống vượt bộ lọc DNS cục bộ"
+    },
+    {
+      "domain": "vioedu.vn",
+      "category": "education",
+      "category_label": "Giáo dục",
+      "allowed": true,
+      "rule_id": "11",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Hỗ trợ học tập và tra cứu kiến thức"
+    },
+    {
+      "domain": "scratch.mit.edu",
+      "category": "education",
+      "category_label": "Giáo dục",
+      "allowed": true,
+      "rule_id": "11",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Hỗ trợ học tập và tra cứu kiến thức"
+    },
+    {
+      "domain": "khanacademy.org",
+      "category": "education",
+      "category_label": "Giáo dục",
+      "allowed": true,
+      "rule_id": "11",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Hỗ trợ học tập và tra cứu kiến thức"
+    },
+    {
+      "domain": "duolingo.com",
+      "category": "education",
+      "category_label": "Giáo dục",
+      "allowed": true,
+      "rule_id": "11",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Hỗ trợ học tập và tra cứu kiến thức"
+    },
+    {
+      "domain": "wikipedia.org",
+      "category": "education",
+      "category_label": "Giáo dục",
+      "allowed": true,
+      "rule_id": "11",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Hỗ trợ học tập và tra cứu kiến thức"
+    },
+    {
+      "domain": "moet.gov.vn",
+      "category": "education",
+      "category_label": "Giáo dục",
+      "allowed": true,
+      "rule_id": "11",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Hỗ trợ học tập và tra cứu kiến thức"
+    },
+    {
+      "domain": "coursera.org",
+      "category": "education",
+      "category_label": "Giáo dục",
+      "allowed": true,
+      "rule_id": "11",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Hỗ trợ học tập và tra cứu kiến thức"
+    },
+    {
+      "domain": "edx.org",
+      "category": "education",
+      "category_label": "Giáo dục",
+      "allowed": true,
+      "rule_id": "11",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Hỗ trợ học tập và tra cứu kiến thức"
+    },
+    {
+      "domain": "hocmai.vn",
+      "category": "education",
+      "category_label": "Giáo dục",
+      "allowed": true,
+      "rule_id": "11",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Hỗ trợ học tập và tra cứu kiến thức"
+    },
+    {
+      "domain": "vietjack.com",
+      "category": "education",
+      "category_label": "Giáo dục",
+      "allowed": true,
+      "rule_id": "11",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Hỗ trợ học tập và tra cứu kiến thức"
+    },
+    {
+      "domain": "loigiaihay.com",
+      "category": "education",
+      "category_label": "Giáo dục",
+      "allowed": true,
+      "rule_id": "11",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Hỗ trợ học tập và tra cứu kiến thức"
+    },
+    {
+      "domain": "olm.vn",
+      "category": "education",
+      "category_label": "Giáo dục",
+      "allowed": true,
+      "rule_id": "11",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Hỗ trợ học tập và tra cứu kiến thức"
+    },
+    {
+      "domain": "azota.vn",
+      "category": "education",
+      "category_label": "Giáo dục",
+      "allowed": true,
+      "rule_id": "11",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Hỗ trợ học tập và tra cứu kiến thức"
+    },
+    {
+      "domain": "shub.edu.vn",
+      "category": "education",
+      "category_label": "Giáo dục",
+      "allowed": true,
+      "rule_id": "11",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Hỗ trợ học tập và tra cứu kiến thức"
+    },
+    {
+      "domain": "code.org",
+      "category": "education",
+      "category_label": "Giáo dục",
+      "allowed": true,
+      "rule_id": "11",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Hỗ trợ học tập và tra cứu kiến thức"
+    },
+    {
+      "domain": "w3schools.com",
+      "category": "education",
+      "category_label": "Giáo dục",
+      "allowed": true,
+      "rule_id": "11",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Hỗ trợ học tập và tra cứu kiến thức"
+    },
+    {
+      "domain": "geogebra.org",
+      "category": "education",
+      "category_label": "Giáo dục",
+      "allowed": true,
+      "rule_id": "11",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Hỗ trợ học tập và tra cứu kiến thức"
+    },
+    {
+      "domain": "britannica.com",
+      "category": "education",
+      "category_label": "Giáo dục",
+      "allowed": true,
+      "rule_id": "11",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Hỗ trợ học tập và tra cứu kiến thức"
+    },
+    {
+      "domain": "nasa.gov",
+      "category": "education",
+      "category_label": "Giáo dục",
+      "allowed": true,
+      "rule_id": "11",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Hỗ trợ học tập và tra cứu kiến thức"
+    },
+    {
+      "domain": "nationalgeographic.com",
+      "category": "education",
+      "category_label": "Giáo dục",
+      "allowed": true,
+      "rule_id": "11",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Hỗ trợ học tập và tra cứu kiến thức"
+    },
+    {
+      "domain": "youtube.com",
+      "category": "entertainment",
+      "category_label": "Giải trí",
+      "allowed": true,
+      "rule_id": "12",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Giải trí phù hợp lứa tuổi trong khung giờ"
+    },
+    {
+      "domain": "youtubekids.com",
+      "category": "entertainment",
+      "category_label": "Giải trí",
+      "allowed": true,
+      "rule_id": "12",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Giải trí phù hợp lứa tuổi trong khung giờ"
+    },
+    {
+      "domain": "spotify.com",
+      "category": "entertainment",
+      "category_label": "Giải trí",
+      "allowed": true,
+      "rule_id": "12",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Giải trí phù hợp lứa tuổi trong khung giờ"
+    },
+    {
+      "domain": "zingmp3.vn",
+      "category": "entertainment",
+      "category_label": "Giải trí",
+      "allowed": true,
+      "rule_id": "12",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Giải trí phù hợp lứa tuổi trong khung giờ"
+    },
+    {
+      "domain": "nhaccuatui.com",
+      "category": "entertainment",
+      "category_label": "Giải trí",
+      "allowed": true,
+      "rule_id": "12",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Giải trí phù hợp lứa tuổi trong khung giờ"
+    },
+    {
+      "domain": "fptplay.vn",
+      "category": "entertainment",
+      "category_label": "Giải trí",
+      "allowed": true,
+      "rule_id": "12",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Giải trí phù hợp lứa tuổi trong khung giờ"
+    },
+    {
+      "domain": "tv360.vn",
+      "category": "entertainment",
+      "category_label": "Giải trí",
+      "allowed": true,
+      "rule_id": "12",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Giải trí phù hợp lứa tuổi trong khung giờ"
+    },
+    {
+      "domain": "vieon.vn",
+      "category": "entertainment",
+      "category_label": "Giải trí",
+      "allowed": true,
+      "rule_id": "12",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Giải trí phù hợp lứa tuổi trong khung giờ"
+    },
+    {
+      "domain": "netflix.com",
+      "category": "entertainment",
+      "category_label": "Giải trí",
+      "allowed": true,
+      "rule_id": "12",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Giải trí phù hợp lứa tuổi trong khung giờ"
+    },
+    {
+      "domain": "disneyplus.com",
+      "category": "entertainment",
+      "category_label": "Giải trí",
+      "allowed": true,
+      "rule_id": "12",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Giải trí phù hợp lứa tuổi trong khung giờ"
+    },
+    {
+      "domain": "pbskids.org",
+      "category": "entertainment",
+      "category_label": "Giải trí",
+      "allowed": true,
+      "rule_id": "12",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Giải trí phù hợp lứa tuổi trong khung giờ"
+    },
+    {
+      "domain": "nickjr.com",
+      "category": "entertainment",
+      "category_label": "Giải trí",
+      "allowed": true,
+      "rule_id": "12",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Giải trí phù hợp lứa tuổi trong khung giờ"
+    },
+    {
+      "domain": "cartoonnetwork.com",
+      "category": "entertainment",
+      "category_label": "Giải trí",
+      "allowed": true,
+      "rule_id": "12",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Giải trí phù hợp lứa tuổi trong khung giờ"
+    },
+    {
+      "domain": "soundcloud.com",
+      "category": "entertainment",
+      "category_label": "Giải trí",
+      "allowed": true,
+      "rule_id": "12",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Giải trí phù hợp lứa tuổi trong khung giờ"
+    },
+    {
+      "domain": "vimeo.com",
+      "category": "entertainment",
+      "category_label": "Giải trí",
+      "allowed": true,
+      "rule_id": "12",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Giải trí phù hợp lứa tuổi trong khung giờ"
+    },
+    {
+      "domain": "facebook.com",
+      "category": "social",
+      "category_label": "Mạng xã hội",
+      "allowed": false,
+      "rule_id": "13",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Hạn chế mạng xã hội cho trẻ dưới 13 tuổi"
+    },
+    {
+      "domain": "instagram.com",
+      "category": "social",
+      "category_label": "Mạng xã hội",
+      "allowed": false,
+      "rule_id": "13",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Hạn chế mạng xã hội cho trẻ dưới 13 tuổi"
+    },
+    {
+      "domain": "tiktok.com",
+      "category": "social",
+      "category_label": "Mạng xã hội",
+      "allowed": false,
+      "rule_id": "13",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Hạn chế mạng xã hội cho trẻ dưới 13 tuổi"
+    },
+    {
+      "domain": "threads.net",
+      "category": "social",
+      "category_label": "Mạng xã hội",
+      "allowed": false,
+      "rule_id": "13",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Hạn chế mạng xã hội cho trẻ dưới 13 tuổi"
+    },
+    {
+      "domain": "x.com",
+      "category": "social",
+      "category_label": "Mạng xã hội",
+      "allowed": false,
+      "rule_id": "13",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Hạn chế mạng xã hội cho trẻ dưới 13 tuổi"
+    },
+    {
+      "domain": "twitter.com",
+      "category": "social",
+      "category_label": "Mạng xã hội",
+      "allowed": false,
+      "rule_id": "13",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Hạn chế mạng xã hội cho trẻ dưới 13 tuổi"
+    },
+    {
+      "domain": "snapchat.com",
+      "category": "social",
+      "category_label": "Mạng xã hội",
+      "allowed": false,
+      "rule_id": "13",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Hạn chế mạng xã hội cho trẻ dưới 13 tuổi"
+    },
+    {
+      "domain": "reddit.com",
+      "category": "social",
+      "category_label": "Mạng xã hội",
+      "allowed": false,
+      "rule_id": "13",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Hạn chế mạng xã hội cho trẻ dưới 13 tuổi"
+    },
+    {
+      "domain": "pinterest.com",
+      "category": "social",
+      "category_label": "Mạng xã hội",
+      "allowed": false,
+      "rule_id": "13",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Hạn chế mạng xã hội cho trẻ dưới 13 tuổi"
+    },
+    {
+      "domain": "tumblr.com",
+      "category": "social",
+      "category_label": "Mạng xã hội",
+      "allowed": false,
+      "rule_id": "13",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Hạn chế mạng xã hội cho trẻ dưới 13 tuổi"
+    },
+    {
+      "domain": "discord.com",
+      "category": "social",
+      "category_label": "Mạng xã hội",
+      "allowed": false,
+      "rule_id": "13",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Hạn chế mạng xã hội cho trẻ dưới 13 tuổi"
+    },
+    {
+      "domain": "telegram.org",
+      "category": "social",
+      "category_label": "Mạng xã hội",
+      "allowed": false,
+      "rule_id": "13",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Hạn chế mạng xã hội cho trẻ dưới 13 tuổi"
+    },
+    {
+      "domain": "zalo.me",
+      "category": "social",
+      "category_label": "Mạng xã hội",
+      "allowed": false,
+      "rule_id": "13",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Hạn chế mạng xã hội cho trẻ dưới 13 tuổi"
+    },
+    {
+      "domain": "messenger.com",
+      "category": "social",
+      "category_label": "Mạng xã hội",
+      "allowed": false,
+      "rule_id": "13",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Hạn chế mạng xã hội cho trẻ dưới 13 tuổi"
+    },
+    {
+      "domain": "wechat.com",
+      "category": "social",
+      "category_label": "Mạng xã hội",
+      "allowed": false,
+      "rule_id": "13",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Hạn chế mạng xã hội cho trẻ dưới 13 tuổi"
+    },
+    {
+      "domain": "roblox.com",
+      "category": "gaming",
+      "category_label": "Trò chơi",
+      "allowed": false,
+      "rule_id": "14",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Chặn cổng trò chơi trong giờ học"
+    },
+    {
+      "domain": "minecraft.net",
+      "category": "gaming",
+      "category_label": "Trò chơi",
+      "allowed": false,
+      "rule_id": "14",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Chặn cổng trò chơi trong giờ học"
+    },
+    {
+      "domain": "steampowered.com",
+      "category": "gaming",
+      "category_label": "Trò chơi",
+      "allowed": false,
+      "rule_id": "14",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Chặn cổng trò chơi trong giờ học"
+    },
+    {
+      "domain": "epicgames.com",
+      "category": "gaming",
+      "category_label": "Trò chơi",
+      "allowed": false,
+      "rule_id": "14",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Chặn cổng trò chơi trong giờ học"
+    },
+    {
+      "domain": "poki.com",
+      "category": "gaming",
+      "category_label": "Trò chơi",
+      "allowed": false,
+      "rule_id": "14",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Chặn cổng trò chơi trong giờ học"
+    },
+    {
+      "domain": "crazygames.com",
+      "category": "gaming",
+      "category_label": "Trò chơi",
+      "allowed": false,
+      "rule_id": "14",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Chặn cổng trò chơi trong giờ học"
+    },
+    {
+      "domain": "y8.com",
+      "category": "gaming",
+      "category_label": "Trò chơi",
+      "allowed": false,
+      "rule_id": "14",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Chặn cổng trò chơi trong giờ học"
+    },
+    {
+      "domain": "friv.com",
+      "category": "gaming",
+      "category_label": "Trò chơi",
+      "allowed": false,
+      "rule_id": "14",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Chặn cổng trò chơi trong giờ học"
+    },
+    {
+      "domain": "krunker.io",
+      "category": "gaming",
+      "category_label": "Trò chơi",
+      "allowed": false,
+      "rule_id": "14",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Chặn cổng trò chơi trong giờ học"
+    },
+    {
+      "domain": "agar.io",
+      "category": "gaming",
+      "category_label": "Trò chơi",
+      "allowed": false,
+      "rule_id": "14",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Chặn cổng trò chơi trong giờ học"
+    },
+    {
+      "domain": "slither.io",
+      "category": "gaming",
+      "category_label": "Trò chơi",
+      "allowed": false,
+      "rule_id": "14",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Chặn cổng trò chơi trong giờ học"
+    },
+    {
+      "domain": "riotgames.com",
+      "category": "gaming",
+      "category_label": "Trò chơi",
+      "allowed": false,
+      "rule_id": "14",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Chặn cổng trò chơi trong giờ học"
+    },
+    {
+      "domain": "ea.com",
+      "category": "gaming",
+      "category_label": "Trò chơi",
+      "allowed": false,
+      "rule_id": "14",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Chặn cổng trò chơi trong giờ học"
+    },
+    {
+      "domain": "ubisoft.com",
+      "category": "gaming",
+      "category_label": "Trò chơi",
+      "allowed": false,
+      "rule_id": "14",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Chặn cổng trò chơi trong giờ học"
+    },
+    {
+      "domain": "blizzard.com",
+      "category": "gaming",
+      "category_label": "Trò chơi",
+      "allowed": false,
+      "rule_id": "14",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Chặn cổng trò chơi trong giờ học"
+    },
+    {
+      "domain": "garena.vn",
+      "category": "gaming",
+      "category_label": "Trò chơi",
+      "allowed": false,
+      "rule_id": "14",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Chặn cổng trò chơi trong giờ học"
+    },
+    {
+      "domain": "vnggames.com",
+      "category": "gaming",
+      "category_label": "Trò chơi",
+      "allowed": false,
+      "rule_id": "14",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Chặn cổng trò chơi trong giờ học"
+    },
+    {
+      "domain": "itch.io",
+      "category": "gaming",
+      "category_label": "Trò chơi",
+      "allowed": false,
+      "rule_id": "14",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Chặn cổng trò chơi trong giờ học"
+    },
+    {
+      "domain": "miniclip.com",
+      "category": "gaming",
+      "category_label": "Trò chơi",
+      "allowed": false,
+      "rule_id": "14",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Chặn cổng trò chơi trong giờ học"
+    },
+    {
+      "domain": "kongregate.com",
+      "category": "gaming",
+      "category_label": "Trò chơi",
+      "allowed": false,
+      "rule_id": "14",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Chặn cổng trò chơi trong giờ học"
+    },
+    {
+      "domain": "adult-block-1.example",
+      "category": "inappropriate",
+      "category_label": "Không phù hợp lứa tuổi",
+      "allowed": false,
+      "rule_id": "15",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Chặn nội dung người lớn, cờ bạc và độc hại"
+    },
+    {
+      "domain": "adult-block-2.example",
+      "category": "inappropriate",
+      "category_label": "Không phù hợp lứa tuổi",
+      "allowed": false,
+      "rule_id": "15",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Chặn nội dung người lớn, cờ bạc và độc hại"
+    },
+    {
+      "domain": "adult-block-3.example",
+      "category": "inappropriate",
+      "category_label": "Không phù hợp lứa tuổi",
+      "allowed": false,
+      "rule_id": "15",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Chặn nội dung người lớn, cờ bạc và độc hại"
+    },
+    {
+      "domain": "adult-block-4.example",
+      "category": "inappropriate",
+      "category_label": "Không phù hợp lứa tuổi",
+      "allowed": false,
+      "rule_id": "15",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Chặn nội dung người lớn, cờ bạc và độc hại"
+    },
+    {
+      "domain": "adult-block-5.example",
+      "category": "inappropriate",
+      "category_label": "Không phù hợp lứa tuổi",
+      "allowed": false,
+      "rule_id": "15",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Chặn nội dung người lớn, cờ bạc và độc hại"
+    },
+    {
+      "domain": "adult-block-6.example",
+      "category": "inappropriate",
+      "category_label": "Không phù hợp lứa tuổi",
+      "allowed": false,
+      "rule_id": "15",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Chặn nội dung người lớn, cờ bạc và độc hại"
+    },
+    {
+      "domain": "adult-block-7.example",
+      "category": "inappropriate",
+      "category_label": "Không phù hợp lứa tuổi",
+      "allowed": false,
+      "rule_id": "15",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Chặn nội dung người lớn, cờ bạc và độc hại"
+    },
+    {
+      "domain": "adult-block-8.example",
+      "category": "inappropriate",
+      "category_label": "Không phù hợp lứa tuổi",
+      "allowed": false,
+      "rule_id": "15",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Chặn nội dung người lớn, cờ bạc và độc hại"
+    },
+    {
+      "domain": "adult-block-9.example",
+      "category": "inappropriate",
+      "category_label": "Không phù hợp lứa tuổi",
+      "allowed": false,
+      "rule_id": "15",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Chặn nội dung người lớn, cờ bạc và độc hại"
+    },
+    {
+      "domain": "adult-block-10.example",
+      "category": "inappropriate",
+      "category_label": "Không phù hợp lứa tuổi",
+      "allowed": false,
+      "rule_id": "15",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Chặn nội dung người lớn, cờ bạc và độc hại"
+    },
+    {
+      "domain": "adult-block-11.example",
+      "category": "inappropriate",
+      "category_label": "Không phù hợp lứa tuổi",
+      "allowed": false,
+      "rule_id": "15",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Chặn nội dung người lớn, cờ bạc và độc hại"
+    },
+    {
+      "domain": "adult-block-12.example",
+      "category": "inappropriate",
+      "category_label": "Không phù hợp lứa tuổi",
+      "allowed": false,
+      "rule_id": "15",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Chặn nội dung người lớn, cờ bạc và độc hại"
+    },
+    {
+      "domain": "adult-block-13.example",
+      "category": "inappropriate",
+      "category_label": "Không phù hợp lứa tuổi",
+      "allowed": false,
+      "rule_id": "15",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Chặn nội dung người lớn, cờ bạc và độc hại"
+    },
+    {
+      "domain": "adult-block-14.example",
+      "category": "inappropriate",
+      "category_label": "Không phù hợp lứa tuổi",
+      "allowed": false,
+      "rule_id": "15",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Chặn nội dung người lớn, cờ bạc và độc hại"
+    },
+    {
+      "domain": "adult-block-15.example",
+      "category": "inappropriate",
+      "category_label": "Không phù hợp lứa tuổi",
+      "allowed": false,
+      "rule_id": "15",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Chặn nội dung người lớn, cờ bạc và độc hại"
+    },
+    {
+      "domain": "adult-block-16.example",
+      "category": "inappropriate",
+      "category_label": "Không phù hợp lứa tuổi",
+      "allowed": false,
+      "rule_id": "15",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Chặn nội dung người lớn, cờ bạc và độc hại"
+    },
+    {
+      "domain": "adult-block-17.example",
+      "category": "inappropriate",
+      "category_label": "Không phù hợp lứa tuổi",
+      "allowed": false,
+      "rule_id": "15",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Chặn nội dung người lớn, cờ bạc và độc hại"
+    },
+    {
+      "domain": "adult-block-18.example",
+      "category": "inappropriate",
+      "category_label": "Không phù hợp lứa tuổi",
+      "allowed": false,
+      "rule_id": "15",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Chặn nội dung người lớn, cờ bạc và độc hại"
+    },
+    {
+      "domain": "adult-block-19.example",
+      "category": "inappropriate",
+      "category_label": "Không phù hợp lứa tuổi",
+      "allowed": false,
+      "rule_id": "15",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Chặn nội dung người lớn, cờ bạc và độc hại"
+    },
+    {
+      "domain": "adult-block-20.example",
+      "category": "inappropriate",
+      "category_label": "Không phù hợp lứa tuổi",
+      "allowed": false,
+      "rule_id": "15",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Chặn nội dung người lớn, cờ bạc và độc hại"
+    },
+    {
+      "domain": "adult-block-21.example",
+      "category": "inappropriate",
+      "category_label": "Không phù hợp lứa tuổi",
+      "allowed": false,
+      "rule_id": "15",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Chặn nội dung người lớn, cờ bạc và độc hại"
+    },
+    {
+      "domain": "adult-block-22.example",
+      "category": "inappropriate",
+      "category_label": "Không phù hợp lứa tuổi",
+      "allowed": false,
+      "rule_id": "15",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Chặn nội dung người lớn, cờ bạc và độc hại"
+    },
+    {
+      "domain": "adult-block-23.example",
+      "category": "inappropriate",
+      "category_label": "Không phù hợp lứa tuổi",
+      "allowed": false,
+      "rule_id": "15",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Chặn nội dung người lớn, cờ bạc và độc hại"
+    },
+    {
+      "domain": "adult-block-24.example",
+      "category": "inappropriate",
+      "category_label": "Không phù hợp lứa tuổi",
+      "allowed": false,
+      "rule_id": "15",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Chặn nội dung người lớn, cờ bạc và độc hại"
+    },
+    {
+      "domain": "adult-block-25.example",
+      "category": "inappropriate",
+      "category_label": "Không phù hợp lứa tuổi",
+      "allowed": false,
+      "rule_id": "15",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Chặn nội dung người lớn, cờ bạc và độc hại"
+    },
+    {
+      "domain": "adult-block-26.example",
+      "category": "inappropriate",
+      "category_label": "Không phù hợp lứa tuổi",
+      "allowed": false,
+      "rule_id": "15",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Chặn nội dung người lớn, cờ bạc và độc hại"
+    },
+    {
+      "domain": "adult-block-27.example",
+      "category": "inappropriate",
+      "category_label": "Không phù hợp lứa tuổi",
+      "allowed": false,
+      "rule_id": "15",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Chặn nội dung người lớn, cờ bạc và độc hại"
+    },
+    {
+      "domain": "adult-block-28.example",
+      "category": "inappropriate",
+      "category_label": "Không phù hợp lứa tuổi",
+      "allowed": false,
+      "rule_id": "15",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Chặn nội dung người lớn, cờ bạc và độc hại"
+    },
+    {
+      "domain": "adult-block-29.example",
+      "category": "inappropriate",
+      "category_label": "Không phù hợp lứa tuổi",
+      "allowed": false,
+      "rule_id": "15",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Chặn nội dung người lớn, cờ bạc và độc hại"
+    },
+    {
+      "domain": "adult-block-30.example",
+      "category": "inappropriate",
+      "category_label": "Không phù hợp lứa tuổi",
+      "allowed": false,
+      "rule_id": "15",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Chặn nội dung người lớn, cờ bạc và độc hại"
+    },
+    {
+      "domain": "portal-edu-1.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-2.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-3.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-4.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-5.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-6.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-7.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-8.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-9.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-10.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-11.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-12.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-13.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-14.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-15.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-16.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-17.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-18.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-19.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-20.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-21.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-22.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-23.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-24.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-25.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-26.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-27.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-28.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-29.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-30.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-31.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-32.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-33.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-34.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-35.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-36.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-37.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-38.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-39.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-40.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-41.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-42.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-43.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-44.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-45.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-46.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-47.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-48.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-49.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-50.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-51.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-52.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-53.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-54.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-55.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-56.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-57.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-58.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-59.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-60.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-61.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-62.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-63.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-64.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-65.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-66.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-67.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-68.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-69.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-70.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-71.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-72.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-73.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-74.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-75.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-76.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-77.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-78.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-79.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-80.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-81.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-82.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-83.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-84.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-85.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-86.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-87.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-88.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-89.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-90.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-91.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-92.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-93.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-94.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-95.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-96.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-97.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-98.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-99.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-100.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-101.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-102.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-103.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-104.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    },
+    {
+      "domain": "portal-edu-105.vn",
+      "category": "uncategorized",
+      "category_label": "Chưa phân loại",
+      "allowed": true,
+      "rule_id": "16",
+      "set_by": "Mẹ",
+      "set_at": "12/11/2026",
+      "reason": "Tên miền thông dụng chưa gắn nhãn hạn chế"
+    }
+  ]
+}

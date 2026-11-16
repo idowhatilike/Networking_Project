@@ -1,0 +1,272 @@
+{
+  "reports": {
+    "child-bi": {
+      "today": {
+        "range_label": "Hôm nay (15/11/2026)",
+        "total_used_min": 52,
+        "quota_min": 90,
+        "blocked_app_count": 1,
+        "blocked_domain_count": 2,
+        "unlock_request_count": 2,
+        "daily_series": [
+          {
+            "day": "Hôm nay",
+            "education_min": 32,
+            "entertainment_min": 0,
+            "gaming_min": 20
+          }
+        ],
+        "top_apps": [
+          { "subject": "code.exe", "category": "Giáo dục", "minutes": 25 },
+          { "subject": "robloxplayerbeta.exe", "category": "Trò chơi", "minutes": 20 },
+          { "subject": "scratch-desktop.exe", "category": "Giáo dục", "minutes": 7 }
+        ],
+        "top_domains": [
+          { "subject": "vioedu.vn", "category": "Giáo dục", "minutes": 18 },
+          { "subject": "scratch.mit.edu", "category": "Giáo dục", "minutes": 14 },
+          { "subject": "youtubekids.com", "category": "Giải trí", "minutes": 10 }
+        ],
+        "blocked_events": [
+          {
+            "time": "21:10",
+            "type": "blocked_domain",
+            "type_label": "Chặn website",
+            "subject": "roblox.com",
+            "reason": "Theo luật #14 do Mẹ đặt ngày 12/11 (Nhóm Trò chơi)"
+          },
+          {
+            "time": "20:05",
+            "type": "blocked_app",
+            "type_label": "Chặn ứng dụng",
+            "subject": "robloxplayerbeta.exe",
+            "reason": "Hết hạn mức riêng 20 phút của nhóm Trò chơi"
+          }
+        ]
+      },
+      "7d": {
+        "range_label": "7 ngày qua (09/11 – 15/11/2026)",
+        "total_used_min": 410,
+        "quota_min": 690,
+        "blocked_app_count": 4,
+        "blocked_domain_count": 7,
+        "unlock_request_count": 5,
+        "daily_series": [
+          { "day": "T2", "education_min": 35, "entertainment_min": 15, "gaming_min": 10 },
+          { "day": "T3", "education_min": 40, "entertainment_min": 10, "gaming_min": 15 },
+          { "day": "T4", "education_min": 30, "entertainment_min": 20, "gaming_min": 0 },
+          { "day": "T5", "education_min": 45, "entertainment_min": 10, "gaming_min": 15 },
+          { "day": "T6", "education_min": 30, "entertainment_min": 15, "gaming_min": 20 },
+          { "day": "T7", "education_min": 25, "entertainment_min": 35, "gaming_min": 20 },
+          { "day": "CN", "education_min": 32, "entertainment_min": 0, "gaming_min": 20 }
+        ],
+        "top_apps": [
+          { "subject": "code.exe", "category": "Giáo dục", "minutes": 140 },
+          { "subject": "scratch-desktop.exe", "category": "Giáo dục", "minutes": 95 },
+          { "subject": "msedge.exe", "category": "Trình duyệt", "minutes": 90 },
+          { "subject": "robloxplayerbeta.exe", "category": "Trò chơi", "minutes": 85 }
+        ],
+        "top_domains": [
+          { "subject": "vioedu.vn", "category": "Giáo dục", "minutes": 120 },
+          { "subject": "scratch.mit.edu", "category": "Giáo dục", "minutes": 85 },
+          { "subject": "youtubekids.com", "category": "Giải trí", "minutes": 75 },
+          { "subject": "khanacademy.org", "category": "Giáo dục", "minutes": 50 }
+        ],
+        "blocked_events": [
+          {
+            "time": "15/11 21:10",
+            "type": "blocked_domain",
+            "type_label": "Chặn website",
+            "subject": "roblox.com",
+            "reason": "Theo luật #14 do Mẹ đặt ngày 12/11 (Nhóm Trò chơi)"
+          },
+          {
+            "time": "14/11 19:50",
+            "type": "blocked_domain",
+            "type_label": "Chặn website",
+            "subject": "tiktok.com",
+            "reason": "Theo luật #13 do Mẹ đặt ngày 12/11 (Nhóm Mạng xã hội)"
+          }
+        ]
+      }
+    },
+    "child-bong": {
+      "today": {
+        "range_label": "Hôm nay (15/11/2026)",
+        "total_used_min": 35,
+        "quota_min": 75,
+        "blocked_app_count": 0,
+        "blocked_domain_count": 1,
+        "unlock_request_count": 1,
+        "daily_series": [
+          { "day": "Hôm nay", "education_min": 25, "entertainment_min": 10, "gaming_min": 0 }
+        ],
+        "top_apps": [
+          { "subject": "msedge.exe", "category": "Trình duyệt", "minutes": 35 }
+        ],
+        "top_domains": [
+          { "subject": "duolingo.com", "category": "Giáo dục", "minutes": 25 },
+          { "subject": "youtubekids.com", "category": "Giải trí", "minutes": 10 }
+        ],
+        "blocked_events": []
+      }
+    }
+  },
+  "requests": [
+    {
+      "id": "req-101",
+      "child_id": "child-bi",
+      "child_name": "Bé Bi",
+      "kind": "add_time",
+      "kind_label": "Xin thêm giờ",
+      "minutes": 15,
+      "domain": "",
+      "summary": "Bé Bi xin thêm 15 phút dùng máy",
+      "reason": "Con đang làm nốt bài tập Toán trên VioEdu ạ",
+      "requested_at": "15/11/2026 21:42 (3 phút trước)",
+      "status": "pending",
+      "parent_message": ""
+    },
+    {
+      "id": "req-102",
+      "child_id": "child-bi",
+      "child_name": "Bé Bi",
+      "kind": "unblock_domain",
+      "kind_label": "Con nghĩ trang này bị chặn nhầm",
+      "minutes": 0,
+      "domain": "scratch.mit.edu",
+      "summary": "Con nghĩ trang scratch.mit.edu bị chặn nhầm",
+      "reason": "Trang thực hành Tin học ở trường cô giao về nhà",
+      "requested_at": "15/11/2026 21:33 (12 phút trước)",
+      "status": "pending",
+      "parent_message": ""
+    },
+    {
+      "id": "req-099",
+      "child_id": "child-bong",
+      "child_name": "Bé Bống",
+      "kind": "add_time",
+      "kind_label": "Xin thêm giờ",
+      "minutes": 15,
+      "domain": "",
+      "summary": "Bé Bống xin thêm 15 phút dùng máy",
+      "reason": "Con muốn nghe nốt truyện cổ tích",
+      "requested_at": "14/11/2026 20:10",
+      "status": "approved",
+      "parent_message": "Được, 15 phút nhé. Nghe xong con đi đánh răng nhé!"
+    },
+    {
+      "id": "req-098",
+      "child_id": "child-bi",
+      "child_name": "Bé Bi",
+      "kind": "add_time",
+      "kind_label": "Xin thêm giờ",
+      "minutes": 30,
+      "domain": "",
+      "summary": "Bé Bi xin thêm 30 phút dùng máy",
+      "reason": "Con muốn chơi thêm với bạn",
+      "requested_at": "13/11/2026 21:30",
+      "status": "denied",
+      "parent_message": "Hôm nay đủ rồi, mai nhé con!"
+    }
+  ],
+  "devices": [
+    {
+      "device_id": "di_pc_bi",
+      "device_name": "PC-Bi (Windows 11 x64)",
+      "child_id": "child-bi",
+      "child_name": "Bé Bi",
+      "online": true,
+      "status": "online",
+      "status_label": "Đang trực tuyến",
+      "last_seen": "20 giây trước",
+      "applied_policy_version": 12,
+      "latest_policy_version": 12,
+      "policy_signature_valid": true,
+      "fingerprint_short": "8f14e45f…a91c",
+      "integrity_warning": "Đồng hồ hệ thống từng lùi 45 giây lúc 21:45 (đã giữ nguyên quota theo bộ đếm độc lập)"
+    },
+    {
+      "device_id": "di_laptop_bong",
+      "device_name": "Laptop-Bong (Windows 10 x64)",
+      "child_id": "child-bong",
+      "child_name": "Bé Bống",
+      "online": false,
+      "status": "offline",
+      "status_label": "Ngoại tuyến 2 ngày",
+      "last_seen": "13/11/2026 19:20",
+      "applied_policy_version": 11,
+      "latest_policy_version": 12,
+      "policy_signature_valid": true,
+      "fingerprint_short": "c9f0f895…3b21",
+      "integrity_warning": ""
+    }
+  ],
+  "audit_logs": [
+    {
+      "id": "aud-201",
+      "ts": "15/11/2026 21:15",
+      "who": "Mẹ",
+      "ip": "192.168.1.25",
+      "child_id": "child-bi",
+      "child_name": "Bé Bi",
+      "field": "weekday_quota",
+      "old_val": "90 phút",
+      "new_val": "60 phút",
+      "sentence": "Thứ 6, Mẹ giảm hạn mức ngày thường của Bé Bi từ 90 xuống 60 phút."
+    },
+    {
+      "id": "aud-200",
+      "ts": "14/11/2026 20:11",
+      "who": "Mẹ",
+      "ip": "192.168.1.25",
+      "child_id": "child-bong",
+      "child_name": "Bé Bống",
+      "field": "bonus_time",
+      "old_val": "+0 phút",
+      "new_val": "+15 phút",
+      "sentence": "Thứ 5, Mẹ đồng ý cộng thêm 15 phút cho Bé Bống (Lời nhắn: Được, 15 phút nhé)."
+    },
+    {
+      "id": "aud-199",
+      "ts": "12/11/2026 19:00",
+      "who": "Bố",
+      "ip": "192.168.1.30",
+      "child_id": "child-bi",
+      "child_name": "Bé Bi",
+      "field": "domain_rule:roblox.com",
+      "old_val": "Cho phép",
+      "new_val": "Chặn (Luật #14)",
+      "sentence": "Thứ 3, Bố đặt luật #14 tạm chặn roblox.com trong tuần để Bé Bi ôn thi."
+    },
+    {
+      "id": "aud-198",
+      "ts": "10/11/2026 08:30",
+      "who": "Mẹ",
+      "ip": "192.168.1.25",
+      "child_id": "child-bi",
+      "child_name": "Bé Bi",
+      "field": "enrollment_consent",
+      "old_val": "Chưa ghép đôi",
+      "new_val": "Đồng ý Nghị định 13/2023 (v1.0)",
+      "sentence": "Thứ 2, Mẹ xác nhận đồng ý chính sách bảo vệ dữ liệu cá nhân (Nghị định 13/2023) khi ghép đôi máy PC-Bi."
+    }
+  ],
+  "consent_records": [
+    {
+      "child_name": "Bé Bi",
+      "device_name": "PC-Bi",
+      "parent_name": "Mẹ",
+      "consent_version": "NĐ13-v1.0 (2026)",
+      "consented_at": "10/11/2026 08:30",
+      "ip": "192.168.1.25"
+    },
+    {
+      "child_name": "Bé Bống",
+      "device_name": "Laptop-Bong",
+      "parent_name": "Mẹ",
+      "consent_version": "NĐ13-v1.0 (2026)",
+      "consented_at": "10/11/2026 08:45",
+      "ip": "192.168.1.25"
+    }
+  ]
+}

@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% from "components/macros.html" import card, data_table, empty_state %}
+
+{% block title %}Tổng quan — OpenGuard Kids{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Tổng quan gia đình</h1>
+      <p class="page-subtitle">Theo dõi giờ dùng máy hôm nay và hỗ trợ kịp thời khi con gửi yêu cầu</p>
+    </div>
+    <div class="quick-actions">
+      <a href="/devices" class="btn btn-outline btn-sm">+ Ghép đôi máy mới</a>
+    </div>
+  </div>
+
+  {% if d.integrity_alerts %}
+  <section aria-label="Cảnh báo toàn vẹn thiết bị">
+    {% for alert in d.integrity_alerts %}
+    <div class="alert-banner {% if alert.severity == 'danger' %}alert-banner-danger{% endif %}" role="alert">
+      <div>
+        <strong>▲ Cảnh báo toàn vẹn ({{ alert.device_name }} · {{ alert.child_name }}):</strong>
+        <span>{{ alert.message }}</span>
+        <small>— Phát hiện: {{ alert.detected_at }}</small>
+      </div>
+      <button type="button" class="btn btn-secondary btn-sm" data-dismiss-alert="{{ alert.id }}">Đã xem</button>
+    </div>
+    {% endfor %}
+  </section>
+  {% endif %}
+
+  <section class="children-grid" aria-label="Danh sách con">
+    {% for child in d.children %}
+      {% include "partials/child_card_partial.html" %}
+    {% endfor %}
+  </section>
+
+  {% call card(
+    title="Yêu cầu của con (" ~ (d.pending_requests | length) ~ " chưa trả lời)",
+    subtitle="Phản hồi kèm lời nhắn ngắn để con hiểu lý do (NT3)"
+  ) %}
+    {% if d.pending_requests %}
+      {% call data_table(["Con & Nội dung yêu cầu", "Lý do con gửi", "Phản hồi nhanh"]) %}
+        {% for r in d.pending_requests %}
+        <tr id="req-{{ r.id }}">
+          <td data-label="Yêu cầu">
+            <strong>{{ r.summary }}</strong>
+            <div class="ogk-card-subtitle">{{ r.requested_at }}</div>
+          </td>
+          <td data-label="Lý do của con">“{{ r.reason }}”</td>
+          <td data-label="Phản hồi">
+            <form
+              hx-post="/requests/{{ r.id }}/decision"
+              hx-target="#req-{{ r.id }}"
+              hx-swap="outerHTML"
+              class="request-decision-form"
+            >
+              <input
+                type="text"
+                name="message"
+                placeholder="Lời nhắn cho con (ví dụ: Được, 15 phút nhé)"
+                required
+              >
+              <button type="submit" name="decision" value="approve" class="btn btn-sm">Đồng ý</button>
+              <button type="submit" name="decision" value="deny" class="btn btn-secondary btn-sm">Từ chối</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      {% endcall %}
+    {% else %}
+      {{ empty_state("Chưa có yêu cầu mới", "Khi con bấm Xin thêm giờ hoặc Báo chặn nhầm, yêu cầu sẽ hiện tại đây.") }}
+    {% endif %}
+  {% endcall %}
+{% endblock %}

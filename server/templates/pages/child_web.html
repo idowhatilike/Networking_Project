@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+{% from "components/macros.html" import card, status_badge, modal, data_table, toast %}
+
+{% block title %}Lọc Website của {{ child.name }} — OpenGuard Kids{% endblock %}
+
+{% block toast %}
+  {{ toast(notice) }}
+{% endblock %}
+
+{% block content %}
+  {% include "partials/child_tabs_nav.html" %}
+
+  {% call card(
+    title="Trạng thái bảo vệ DNS & Mẫu cấu hình nhanh",
+    subtitle="Kiểm soát tại DNS Proxy cục bộ 127.0.0.1:53 trên máy của con"
+  ) %}
+    <div class="stats-grid">
+      <div class="ogk-stat">
+        <div class="ogk-stat-label">Tìm kiếm an toàn (Google / Bing / YouTube)</div>
+        <div class="quick-actions">
+          {{ status_badge('ok', 'SafeSearch: Đang bật') }}
+        </div>
+        <div class="form-help">Ép buộc CNAME SafeSearch để ẩn kết quả nhạy cảm.</div>
+      </div>
+      <div class="ogk-stat">
+        <div class="ogk-stat-label">Chống vượt bộ lọc DNS</div>
+        <div class="quick-actions">
+          {{ status_badge('ok', 'Chặn DNS-over-HTTPS (DoH): Đang bật') }}
+        </div>
+        <div class="form-help">Tự động chặn các điểm cuối DoH (dns.google, cloudflare-dns.com…).</div>
+      </div>
+    </div>
+
+    <div class="ogk-card-footer">
+      <span class="ogk-card-subtitle">Gợi ý cấu hình chuẩn cho lứa tuổi Tiểu học (6–11 tuổi):</span>
+      <button type="button" class="btn btn-outline btn-sm" data-open-modal="modal-preset-6-11">
+        Áp dụng mẫu 6–11 tuổi
+      </button>
+    </div>
+  {% endcall %}
+
+  {% call card(
+    title="Công cụ kiểm tra tên miền (Giải thích luật NT4)",
+    subtitle="Nhập tên miền bất kỳ để xem nhóm phân loại, quyết định Cho phép/Chặn và lời giải thích hiển thị cho con"
+  ) %}
+    <form
+      hx-get="/domains/check"
+      hx-target="#domain-check-result"
+      hx-swap="outerHTML"
+      class="range-form-grid"
+    >
+      <div>
+        <label for="check-domain-input">Tên miền cần kiểm tra</label>
+        <input
+          id="check-domain-input"
+          type="text"
+          name="name"
+          value="{{ check_name or '' }}"
+          placeholder="Ví dụ: vioedu.vn, roblox.com, dns.google"
+          required
+        >
+      </div>
+      <div>
+        <button type="submit" class="btn">Kiểm tra tên miền</button>
+      </div>
+    </form>
+
+    {% include "partials/domain_check_partial.html" %}
+  {% endcall %}
+
+  {% call card(
+    title="6 Nhóm nội dung Website",
+    subtitle="Chọn Cho phép hoặc Chặn cho từng nhóm tên miền"
+  ) %}
+    <form method="post" action="/children/{{ child.id }}/web">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token or 'ogk-dev-csrf-token' }}">
+      <input type="hidden" name="action" value="save_categories">
+      <div class="category-grid">
+        {% for cat in child.web_settings.categories %}
+        <div class="category-card">
+          <div>
+            <strong>{{ cat.name }}</strong>
+            <p class="ogk-card-subtitle">{{ cat.desc }}</p>
+          </div>
+          <div class="quick-actions">
+            <select name="cat_{{ cat.key }}" aria-label="Quyết định cho nhóm {{ cat.name }}">
+              <option value="allow" {% if cat.allowed %}selected{% endif %}>Cho phép</option>
+              <option value="block" {% if not cat.allowed %}selected{% endif %}>Chặn truy cập</option>
+            </select>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      <div class="ogk-card-footer">
+        <button type="submit" class="btn">Lưu cấu hình 6 nhóm</button>
+      </div>
+    </form>
+  {% endcall %}
+
+  {% call card(
+    title="Ngoại lệ theo tên miền (bao gồm toàn bộ miền con *.ten-mien)",
+    subtitle="Ưu tiên áp dụng trước luật theo nhóm"
+  ) %}
+    {% call data_table(["Phạm vi miền", "Nhóm", "Quyết định", "Luật & Người đặt", "Lý do giải thích"]) %}
+      {% for exc in child.web_settings.domain_exceptions %}
+      <tr>
+        <td data-label="Tên miền"><strong><code>{{ exc.wildcard }}</code></strong></td>
+        <td data-label="Nhóm">{{ exc.category_label }}</td>
+        <td data-label="Quyết định">
+          {% if exc.allowed %}
+            {{ status_badge('ok', 'Cho phép') }}
+          {% else %}
+            {{ status_badge('danger', 'Chặn') }}
+          {% endif %}
+        </td>
+        <td data-label="Người đặt">Luật #{{ exc.rule_id }} · {{ exc.set_by }} ({{ exc.set_at }})</td>
+        <td data-label="Lý do">{{ exc.reason }}</td>
+      </tr>
+      {% endfor %}
+    {% endcall %}
+
+    <div class="ogk-card-footer">
+      <form method="post" action="/children/{{ child.id }}/web" class="inline-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token or 'ogk-dev-csrf-token' }}">
+        <input type="hidden" name="action" value="clear_exceptions">
+        <button type="submit" class="btn btn-secondary btn-sm">Xóa sạch ngoại lệ ({})</button>
+      </form>
+    </div>
+  {% endcall %}
+
+  {% call card(
+    title="Danh sách miễn chặn khẩn cấp & học tập vĩnh viễn (NT6 — Chỉ đọc)",
+    subtitle="Các địa chỉ này luôn được phép truy cập trong mọi trường hợp và không thể bị tắt"
+  ) %}
+    <ul>
+      {% for item in child.web_settings.emergency_allowlist %}
+      <li><strong>{{ item }}</strong></li>
+      {% endfor %}
+    </ul>
+  {% endcall %}
+
+  {% call card(
+    title="Danh mục phân loại tên miền (" ~ catalog_total ~ " mục)",
+    subtitle="Tìm kiếm, lọc theo nhóm và điều chỉnh phân loại cho từng tên miền"
+  ) %}
+    <form method="get" action="/children/{{ child.id }}/web" class="range-form-grid">
+      <div>
+        <label for="catalog-search-q">Tìm tên miền</label>
+        <input
+          id="catalog-search-q"
+          type="search"
+          name="q"
+          value="{{ q or '' }}"
+          placeholder="Nhập tên miền cần tìm..."
+        >
+      </div>
+      <div>
+        <button type="submit" class="btn btn-outline">Tìm kiếm</button>
+      </div>
+    </form>
+
+    {% call data_table(["Tên miền", "Nhóm hiện tại", "Mặc định", "Mã luật"]) %}
+      {% for item in catalog_items %}
+      <tr>
+        <td data-label="Tên miền"><code>{{ item.domain }}</code></td>
+        <td data-label="Nhóm">{{ item.category_label }}</td>
+        <td data-label="Mặc định">
+          {% if item.allowed %}
+            {{ status_badge('ok', 'Cho phép') }}
+          {% else %}
+            {{ status_badge('danger', 'Chặn') }}
+          {% endif %}
+        </td>
+        <td data-label="Mã luật">#{{ item.rule_id }} ({{ item.set_by }})</td>
+      </tr>
+      {% endfor %}
+    {% endcall %}
+
+    <div class="ogk-card-footer">
+      <span class="ogk-card-subtitle">
+        Đang hiển thị {{ catalog_items | length }} / {{ catalog_total }} tên miền (Trang {{ page }} / {{ total_pages }})
+      </span>
+      <div class="quick-actions">
+        {% if page > 1 %}
+        <a href="/children/{{ child.id }}/web?page={{ page - 1 }}&q={{ q or '' }}" class="btn btn-secondary btn-sm">← Trang trước</a>
+        {% endif %}
+        {% if page < total_pages %}
+        <a href="/children/{{ child.id }}/web?page={{ page + 1 }}&q={{ q or '' }}" class="btn btn-secondary btn-sm">Trang sau →</a>
+        {% endif %}
+      </div>
+    </div>
+  {% endcall %}
+
+  {% call modal("modal-preset-6-11", "Xem trước mẫu cấu hình 6–11 tuổi") %}
+    <p>Khi áp dụng mẫu 6–11 tuổi, hệ thống sẽ đặt lại các nhóm nội dung như sau:</p>
+    <ul>
+      <li><strong>Cho phép:</strong> Giáo dục & Học tập, Giải trí thiếu nhi (trong hạn mức).</li>
+      <li><strong>Chặn:</strong> Mạng xã hội, Trò chơi trực tuyến, Nội dung không phù hợp lứa tuổi.</li>
+      <li><strong>Bật bắt buộc:</strong> SafeSearch và Chặn DNS-over-HTTPS (DoH).</li>
+    </ul>
+    <form method="post" action="/children/{{ child.id }}/web" class="quick-actions">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token or 'ogk-dev-csrf-token' }}">
+      <input type="hidden" name="action" value="apply_preset_6_11">
+      <button type="submit" class="btn">Xác nhận áp dụng mẫu</button>
+      <button type="button" class="btn btn-secondary" data-close-modal="modal-preset-6-11">Hủy</button>
+    </form>
+  {% endcall %}
+{% endblock %}

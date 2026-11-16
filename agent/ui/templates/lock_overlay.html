@@ -1,0 +1,68 @@
+{% extends "base_kid.html" %}
+{% from "components/macros.html" import status_badge, toast %}
+
+{% block title %}Màn hình nghỉ ngơi (Lock Overlay) — OpenGuard Kids{% endblock %}
+
+{% block toast %}
+  {{ toast(notice) }}
+{% endblock %}
+
+{% block content %}
+  <section class="lock-overlay-screen" aria-label="Màn hình khóa toàn màn hình">
+    {{ status_badge('warn', 'Màn hình nghỉ ngơi (Lock Overlay)') }}
+    <h1>🌙 {{ kid.lock_overlay.headline }}</h1>
+    <p><strong>{{ kid.lock_overlay.subheadline }}</strong></p>
+    <p>
+      Lý do: {{ kid.lock_overlay.reason }} ·
+      Theo luật do <strong>{{ kid.lock_overlay.set_by }}</strong> đặt ngày {{ kid.lock_overlay.set_at }} (NT4).
+    </p>
+
+    <div class="lock-overlay-card">
+      <h2 class="ogk-card-title">Em cần thêm thời gian để hoàn thành bài học? (NT3)</h2>
+      <p class="ogk-card-subtitle">
+        Khi Bố/Mẹ bấm Mở khóa hoặc cộng thêm giờ, màn hình này sẽ tự động đóng trong dưới 5 giây.
+      </p>
+
+      <form method="post" action="/kid/requests" class="range-form-grid">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token or 'ogk-kid-csrf-token' }}">
+        <input type="hidden" name="kind" value="add_time">
+        <div>
+          <label for="overlay-minutes">Số phút em muốn xin thêm</label>
+          <select id="overlay-minutes" name="minutes">
+            <option value="15">+15 phút</option>
+            <option value="30">+30 phút</option>
+          </select>
+        </div>
+        <div>
+          <label for="overlay-reason">Lời nhắn gửi Bố/Mẹ</label>
+          <input
+            id="overlay-reason"
+            type="text"
+            name="reason"
+            placeholder="Ví dụ: Con đang làm nốt bài tập Toán ạ"
+            required
+          >
+        </div>
+        <div>
+          <button type="submit" class="btn">Xin thêm giờ</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="nt6-emergency-box">
+      <h3 class="ogk-card-title">🆘 Cần giúp đỡ gấp? Thông tin khẩn cấp &amp; Miễn chặn (NT6 — Chỉ đọc)</h3>
+      <p>
+        <strong>Tổng đài trợ giúp:</strong> {{ kid.lock_overlay.emergency_phone }} ·
+        {{ kid.lock_overlay.emergency_rescue }}
+      </p>
+      <div>
+        <strong>Các cổng trường học được miễn chặn vĩnh viễn:</strong>
+        <ul>
+          {% for dom in kid.lock_overlay.exempt_school_domains %}
+          <li><code>{{ dom }}</code></li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </section>
+{% endblock %}

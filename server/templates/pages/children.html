@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% from "components/macros.html" import card, status_badge, progress, modal, form_field, toast %}
+
+{% block title %}Hồ sơ của con — OpenGuard Kids{% endblock %}
+
+{% block toast %}
+  {{ toast(notice) }}
+{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Hồ sơ của con ({{ children | length }} trẻ)</h1>
+      <p class="page-subtitle">Quản lý hồ sơ từng con (mô hình 1 phụ huynh : n trẻ : m thiết bị)</p>
+    </div>
+    <div class="quick-actions">
+      <button type="button" class="btn" data-open-modal="modal-add-child">+ Thêm hồ sơ con</button>
+    </div>
+  </div>
+
+  <div class="children-grid">
+    {% for child in children %}
+    {% call card(
+      title=child.name ~ " (" ~ child.age ~ " tuổi)",
+      subtitle="Thiết bị: " ~ child.device_name ~ " · Múi giờ: " ~ child.timezone,
+      header_right=status_badge(child.status, child.status_label)
+    ) %}
+      {{ progress(
+        value=child.used_min,
+        max_val=child.effective_quota_min,
+        label="Đã dùng hôm nay",
+        unit="phút"
+      ) }}
+      <p class="ogk-card-subtitle">
+        Hạn mức ngày thường: <strong>{{ child.weekday_quota_min }} phút</strong> ·
+        Cuối tuần: <strong>{{ child.weekend_quota_min }} phút</strong>
+      </p>
+      <div class="ogk-card-footer">
+        <div class="quick-actions">
+          <a href="/children/{{ child.id }}" class="btn btn-sm">Hôm nay</a>
+          <a href="/children/{{ child.id }}/schedule" class="btn btn-outline btn-sm">Lịch tuần</a>
+          <a href="/children/{{ child.id }}/limits" class="btn btn-outline btn-sm">Hạn mức</a>
+          <a href="/children/{{ child.id }}/apps" class="btn btn-secondary btn-sm">Ứng dụng</a>
+          <a href="/children/{{ child.id }}/web" class="btn btn-secondary btn-sm">Website</a>
+        </div>
+      </div>
+    {% endcall %}
+    {% endfor %}
+  </div>
+
+  {% call modal("modal-add-child", "Thêm hồ sơ con mới") %}
+    <form method="post" action="/children">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token or 'ogk-dev-csrf-token' }}">
+      {{ form_field("name", "Tên thân mật của con", "text", "", "Ví dụ: Bé Na", true) }}
+      {{ form_field("age", "Độ tuổi (6–16 tuổi)", "number", "8", "", true) }}
+      {{ form_field("weekday_quota_min", "Hạn mức ngày thường (phút)", "number", "60", "", true) }}
+      {{ form_field("weekend_quota_min", "Hạn mức cuối tuần (phút)", "number", "90", "", true) }}
+      <div class="quick-actions">
+        <button type="submit" class="btn">Lưu hồ sơ</button>
+        <button type="button" class="btn btn-secondary" data-close-modal="modal-add-child">Hủy</button>
+      </div>
+    </form>
+  {% endcall %}
+{% endblock %}

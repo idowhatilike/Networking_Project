@@ -1,0 +1,38 @@
+{% extends "base_kid.html" %}
+{% from "components/macros.html" import card, status_badge %}
+
+{% block title %}Nhắc giờ dùng máy ({{ preset.minutes_left }} phút) — OpenGuard Kids{% endblock %}
+
+{% block content %}
+  <div class="schedule-summary-bar">
+    <span>Chọn mốc cảnh báo để xem thử (F1):</span>
+    <div class="quick-actions">
+      <a href="/kid/warning?level=10" class="btn btn-sm {% if level != '10' %}btn-secondary{% endif %}">Mốc 10 phút</a>
+      <a href="/kid/warning?level=5" class="btn btn-sm {% if level != '5' %}btn-secondary{% endif %}">Mốc 5 phút</a>
+      <a href="/kid/warning?level=1" class="btn btn-sm {% if level != '1' %}btn-secondary{% endif %}">Mốc 1 phút + 60s ân hạn</a>
+    </div>
+  </div>
+
+  {% call card(
+    title="⏰ " ~ preset.title,
+    subtitle="Cửa sổ thông báo luôn hiển thị trên cùng để em chủ động lưu bài"
+  ) %}
+    <p>{{ preset.message }}</p>
+
+    {% if preset.grace_seconds > 0 %}
+    <div class="kid-grace-box" aria-live="polite">
+      <div><strong>Em hãy lưu bài nhé!</strong> Thời gian ân hạn còn lại:</div>
+      <div class="kid-grace-timer">
+        <span data-countdown-sec="{{ preset.grace_seconds }}">01:00</span>
+      </div>
+    </div>
+    {% endif %}
+
+    <div class="ogk-card-footer">
+      <div class="quick-actions">
+        <a href="/kid/requests?kind=add_time" class="btn">Xin thêm giờ</a>
+        <a href="/kid" class="btn btn-secondary">Em đã hiểu và đang lưu bài</a>
+      </div>
+    </div>
+  {% endcall %}
+{% endblock %}

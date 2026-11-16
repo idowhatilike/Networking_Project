@@ -1,0 +1,37 @@
+{% extends "base_kid.html" %}
+{% from "components/macros.html" import card, status_badge %}
+
+{% block title %}Về OpenGuard Kids — Minh bạch cùng em{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Về OpenGuard Kids</h1>
+      <p class="page-subtitle">
+        Giải thích ngắn gọn, trung thực cho em về những gì phần mềm ghi nhận và những gì phần mềm KHÔNG BAO GIỜ làm.
+      </p>
+    </div>
+  </div>
+
+  {% call card(
+    title="Lời hứa minh bạch với em (NT1 & NT2)",
+    subtitle="OpenGuard Kids không phải là phần mềm theo dõi lén lút"
+  ) %}
+    <ul>
+      <li>
+        <strong>Luôn hiện diện rõ ràng (NT1):</strong> Biểu tượng OpenGuard luôn hiển thị ở khay hệ thống để em biết phần mềm đang hoạt động.
+      </li>
+      <li>
+        <strong>Tôn trọng quyền riêng tư của em (NT2):</strong> Phần mềm chỉ đếm số phút em dùng từng ứng dụng và tên trang web chính (ví dụ: <code>vioedu.vn</code>).
+      </li>
+      <li>
+        <strong>Không bao giờ xâm phạm bí mật cá nhân:</strong> Phần mềm {{ status_badge('danger', 'KHÔNG chụp màn hình') }}, {{ status_badge('danger', 'KHÔNG ghi bàn phím') }}, {{ status_badge('danger', 'KHÔNG đọc tin nhắn hay mật khẩu') }}.
+      </li>
+      <li>
+        <strong>Công bằng và có lắng nghe (NT5, NT6):</strong> Em xem được cùng bảng thống kê như Bố/Mẹ và luôn có nút <em>Xin thêm giờ</em> hoặc <em>Báo trang chặn nhầm</em>.
+      </li>
+    </ul>
+  {% endcall %}
+
+  {% include "privacy_table.html" %}
+{% endblock %}

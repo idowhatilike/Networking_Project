@@ -1,0 +1,14 @@
+{% from "components/macros.html" import status_badge %}
+<tr id="req-{{ req_id }}">
+  <td data-label="Yêu cầu">
+    <strong>{{ summary }}</strong>
+  </td>
+  <td data-label="Lời nhắn cho con">“{{ message }}”</td>
+  <td data-label="Trạng thái">
+    {% if decision == 'approve' %}
+      {{ status_badge('ok', 'Đã đồng ý') }}
+    {% else %}
+      {{ status_badge('warn', 'Đã từ chối') }}
+    {% endif %}
+  </td>
+</tr>

@@ -1,0 +1,52 @@
+{% extends "base_kid.html" %}
+{% from "components/macros.html" import card, status_badge %}
+
+{% block title %}Giải thích lý do tạm chặn (NT4) — OpenGuard Kids{% endblock %}
+
+{% block content %}
+  <div class="schedule-summary-bar">
+    <span>Xem lời giải thích khi bị chặn (NT3 &amp; NT4):</span>
+    <div class="quick-actions">
+      <a href="/kid/blocked?kind=app" class="btn btn-sm {% if kind != 'app' %}btn-secondary{% endif %}">Chặn ứng dụng</a>
+      <a href="/kid/blocked?kind=web" class="btn btn-sm {% if kind != 'web' %}btn-secondary{% endif %}">Chặn website</a>
+    </div>
+  </div>
+
+  {% call card(
+    title="Giải thích minh bạch: " ~ item.kind_label,
+    subtitle="OpenGuard Kids luôn giải thích rõ lý do, không bao giờ giả làm lỗi mạng (NT4)"
+  ) %}
+    <div class="stats-grid">
+      <div class="ogk-stat">
+        <div class="ogk-stat-label">Tên ứng dụng / Trang web</div>
+        <div class="ogk-stat-value"><code>{{ item.subject }}</code></div>
+      </div>
+      <div class="ogk-stat">
+        <div class="ogk-stat-label">Người đặt luật &amp; Thời điểm</div>
+        <div class="ogk-stat-value">
+          {{ item.set_by }} <span class="ogk-stat-unit">(Luật #{{ item.rule_id }} · {{ item.set_at }})</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="alert-banner">
+      <div>
+        <strong>Lý do tạm chặn:</strong>
+        <span>{{ item.reason }}</span>
+      </div>
+    </div>
+
+    <p class="ogk-card-subtitle">
+      Nếu em cần dùng cho việc học hoặc nghĩ rằng đây là nhầm lẫn, em hãy gửi lời nhắn cho Bố/Mẹ nhé (NT3):
+    </p>
+
+    <div class="ogk-card-footer">
+      <div class="quick-actions">
+        <a href="/kid/requests?kind=add_time" class="btn">Xin thêm giờ</a>
+        <a href="/kid/requests?kind=unblock_domain&subject={{ item.subject }}" class="btn btn-outline">
+          Con nghĩ trang này bị chặn nhầm
+        </a>
+      </div>
+    </div>
+  {% endcall %}
+{% endblock %}

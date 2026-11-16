@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% from "components/macros.html" import card, schedule_grid, toast %}
+
+{% block title %}Lịch tuần 7×48 của {{ child.name }} — OpenGuard Kids{% endblock %}
+
+{% block toast %}
+  {{ toast(notice) }}
+{% endblock %}
+
+{% block content %}
+  {% include "partials/child_tabs_nav.html" %}
+
+  {% if error %}
+  <div class="form-error" role="alert">{{ error }}</div>
+  {% endif %}
+
+  {% call card(
+    title="1. Nhập nhanh theo khoảng giờ",
+    subtitle="Chọn các thứ trong tuần và khoảng giờ cho phép (bước 30 phút), lưới 7×48 bên dưới sẽ tự động cập nhật"
+  ) %}
+    <div class="day-checkbox-group" role="group" aria-label="Chọn các ngày trong tuần">
+      {% for d_idx in range(7) %}
+      <label class="day-checkbox-label">
+        <input type="checkbox" name="range_day" value="{{ d_idx }}" {% if d_idx < 5 %}checked{% endif %}>
+        <span>{{ day_names[d_idx] }}</span>
+      </label>
+      {% endfor %}
+    </div>
+
+    <div class="range-form-grid">
+      <div>
+        <label for="range-start-slot">Giờ bắt đầu</label>
+        <select id="range-start-slot">
+          {% for slot in time_slots %}
+          <option value="{{ slot.idx }}" {% if slot.idx == 38 %}selected{% endif %}>{{ slot.start_str }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <label for="range-end-slot">Giờ kết thúc</label>
+        <select id="range-end-slot">
+          {% for slot in time_slots %}
+          <option value="{{ slot.idx + 1 }}" {% if slot.idx + 1 == 42 %}selected{% endif %}>{{ slot.end_str }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="quick-actions">
+        <button type="button" id="btn-add-schedule-range" class="btn">+ Thêm khoảng giờ</button>
+        <button type="button" id="btn-weekend-same" class="btn btn-outline btn-sm">Cuối tuần giống nhau</button>
+        <button type="button" id="btn-clear-schedule" class="btn btn-secondary btn-sm">Xóa hết</button>
+      </div>
+    </div>
+
+    <div>
+      <div class="ogk-stat-label">Các khoảng giờ đang mở:</div>
+      <div id="schedule-range-chips" class="range-chip-list">
+        {% for rng in child.schedule_ranges %}
+        <span class="range-chip">{{ rng.days_label }}: {{ rng.start }}–{{ rng.end }}</span>
+        {% endfor %}
+      </div>
+    </div>
+  {% endcall %}
+
+  <form method="post" action="/children/{{ child.id }}/schedule">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token or 'ogk-dev-csrf-token' }}">
+    {% for d_idx in range(7) %}
+    <input
+      type="hidden"
+      id="schedule-row-{{ d_idx }}"
+      name="row_{{ d_idx }}"
+      value="{{ child.schedule_strings[d_idx] }}"
+    >
+    {% endfor %}
+
+    {% call card(
+      title="2. Lưới lịch tuần 7 × 48 (336 khung 30 phút)",
+      subtitle="Bấm trực tiếp vào từng ô để bật (Mở) hoặc tắt (Khóa) khi cần chỉnh tinh. Múi giờ: " ~ child.timezone
+    ) %}
+      <div class="schedule-summary-bar">
+        <span>
+          Tổng <strong id="schedule-total-hours">{{ total_allowed_hours }}</strong> giờ cho phép mỗi tuần.
+          Mỗi ngày dùng tối đa <code>min(hạn mức ngày, khung giờ mở)</code>.
+        </span>
+        <div class="schedule-legend">
+          <span>■ Xanh (Mở): Cho phép dùng</span>
+          <span>□ Xám (Khóa): Giờ nghỉ ngơi</span>
+        </div>
+      </div>
+
+      {{ schedule_grid(day_names, time_slots, child.schedule_strings) }}
+
+      <div class="ogk-card-footer">
+        <span class="ogk-card-subtitle">
+          Sau khi lưu, máy {{ child.device_name }} sẽ nhận phiên bản chính sách mới trong tối đa 60 giây.
+        </span>
+        <button type="submit" class="btn">Lưu lịch tuần 7×48</button>
+      </div>
+    {% endcall %}
+  </form>
+{% endblock %}
+
+{% block scripts %}
+  <script src="/static/js/schedule-grid.js"></script>
+{% endblock %}

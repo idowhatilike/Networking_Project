@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% from "components/macros.html" import card, form_field, toast %}
+
+{% block title %}Đăng ký tài khoản Phụ huynh — OpenGuard Kids{% endblock %}
+
+{% block auth_toast %}
+  {{ toast(notice) }}
+{% endblock %}
+
+{% block auth_content %}
+  {% call card(
+    title="Đăng ký tài khoản Phụ huynh",
+    subtitle="Thiết lập không gian đồng hành giờ dùng máy tính cùng con"
+  ) %}
+    <span class="auth-tagline">Tôn trọng quyền riêng tư của trẻ (NT1–NT6)</span>
+
+    {% if error %}
+    <div class="form-error" role="alert">{{ error }}</div>
+    {% endif %}
+
+    <form method="post" action="/register">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token or 'ogk-dev-csrf-token' }}">
+
+      {{ form_field(
+        name="display_name",
+        label="Tên hiển thị với con (ví dụ: Mẹ, Bố)",
+        field_type="text",
+        value=display_name or "",
+        placeholder="Mẹ",
+        required=true,
+        help_text="Tên này sẽ hiển thị trong lời giải thích luật trên máy của con (NT4)."
+      ) }}
+
+      {{ form_field(
+        name="email",
+        label="Địa chỉ Email",
+        field_type="email",
+        value=email or "",
+        placeholder="me.bi@example.com",
+        required=true
+      ) }}
+
+      {{ form_field(
+        name="password",
+        label="Mật khẩu (bắt buộc từ 10 ký tự trở lên)",
+        field_type="password",
+        placeholder="Ít nhất 10 ký tự",
+        required=true,
+        min_length=10,
+        help_text="Mật khẩu cần có tối thiểu 10 ký tự để đảm bảo an toàn tài khoản phụ huynh."
+      ) }}
+
+      {{ form_field(
+        name="password_confirm",
+        label="Nhập lại mật khẩu",
+        field_type="password",
+        placeholder="Nhập lại đúng mật khẩu ở trên",
+        required=true,
+        min_length=10
+      ) }}
+
+      <div class="quick-actions">
+        <button type="submit" class="btn">Hoàn tất đăng ký</button>
+        <a href="/login" class="btn btn-secondary">Đã có tài khoản? Đăng nhập</a>
+      </div>
+    </form>
+  {% endcall %}
+{% endblock %}

@@ -1,0 +1,203 @@
+{# Bộ Jinja2 macro dùng chung cho OpenGuard Kids #}
+
+{% macro card(title='', subtitle='', header_right='') %}
+<section class="ogk-card">
+  {% if title or subtitle or header_right %}
+  <div class="ogk-card-header">
+    <div>
+      {% if title %}<h2 class="ogk-card-title">{{ title }}</h2>{% endif %}
+      {% if subtitle %}<p class="ogk-card-subtitle">{{ subtitle }}</p>{% endif %}
+    </div>
+    {% if header_right %}
+    <div>{{ header_right }}</div>
+    {% endif %}
+  </div>
+  {% endif %}
+  <div class="ogk-card-body">
+    {{ caller() }}
+  </div>
+</section>
+{% endmacro %}
+
+{% macro stat(label, value, unit='') %}
+<div class="ogk-stat">
+  <div class="ogk-stat-label">{{ label }}</div>
+  <div class="ogk-stat-value">
+    <span>{{ value }}</span>
+    {% if unit %}<span class="ogk-stat-unit">{{ unit }}</span>{% endif %}
+  </div>
+</div>
+{% endmacro %}
+
+{% macro status_badge(state, label) %}
+{% set icon_map = {
+  'online': '●',
+  'ok': '✓',
+  'idle': '◐',
+  'warn': '▲',
+  'offline': '○',
+  'locked': '■',
+  'danger': '!',
+  'neutral': '◆'
+} %}
+<span class="status-badge status-badge-{{ state }}">
+  <span aria-hidden="true">{{ icon_map.get(state, '●') }}</span>
+  <span>{{ label }}</span>
+</span>
+{% endmacro %}
+
+{% macro progress(value, max_val, label, unit='phút', variant='default') %}
+<div class="progress-block">
+  <div class="progress-header">
+    <span class="progress-label">{{ label }}</span>
+    <span class="progress-Numbers">{{ value }} / {{ max_val }} {{ unit }}</span>
+  </div>
+  <progress
+    class="ogk-progress {% if variant != 'default' %}ogk-progress-{{ variant }}{% endif %}"
+    value="{{ value }}"
+    max="{{ max_val if max_val > 0 else 1 }}"
+  >{{ value }} / {{ max_val }} {{ unit }}</progress>
+</div>
+{% endmacro %}
+
+{% macro modal(modal_id, title) %}
+<dialog id="{{ modal_id }}" aria-labelledby="{{ modal_id }}-title">
+  <div class="ogk-card-header">
+    <h3 id="{{ modal_id }}-title" class="ogk-card-title">{{ title }}</h3>
+    <button type="button" class="btn btn-secondary btn-sm" data-close-modal="{{ modal_id }}">Đóng</button>
+  </div>
+  <div class="ogk-card-body">
+    {{ caller() }}
+  </div>
+</dialog>
+{% endmacro %}
+
+{% macro confirm_dialog(dialog_id, title, message, action_url, cmd_value, target_id, confirm_label='Xác nhận') %}
+<dialog id="{{ dialog_id }}" aria-labelledby="{{ dialog_id }}-title">
+  <h3 id="{{ dialog_id }}-title" class="ogk-card-title">{{ title }}</h3>
+  <p>{{ message }}</p>
+  <form
+    hx-post="{{ action_url }}"
+    hx-target="#{{ target_id }}"
+    hx-swap="outerHTML"
+    class="quick-actions"
+  >
+    <input type="hidden" name="cmd_type" value="{{ cmd_value }}">
+    <button type="submit" class="btn" data-close-modal="{{ dialog_id }}">{{ confirm_label }}</button>
+    <button type="button" class="btn btn-secondary" data-close-modal="{{ dialog_id }}">Hủy</button>
+  </form>
+</dialog>
+{% endmacro %}
+
+{% macro toast(message) %}
+{% if message %}
+<div class="ogk-toast" role="status">{{ message }}</div>
+{% endif %}
+{% endmacro %}
+
+{% macro empty_state(title, message, action_label='', action_href='') %}
+<div class="empty-state">
+  <h3>{{ title }}</h3>
+  <p>{{ message }}</p>
+  {% if action_label and action_href %}
+  <a href="{{ action_href }}" class="btn btn-outline">{{ action_label }}</a>
+  {% endif %}
+</div>
+{% endmacro %}
+
+{% macro data_table(headers) %}
+<table class="ogk-table">
+  <thead>
+    <tr>
+      {% for h in headers %}
+      <th scope="col">{{ h }}</th>
+      {% endfor %}
+    </tr>
+  </thead>
+  <tbody>
+    {{ caller() }}
+  </tbody>
+</table>
+{% endmacro %}
+
+{% macro form_field(name , label , field_type='text' , value='' , placeholder='' ,
+                   required=true , min_length=0 , help_text='' , error='') %}
+<div class="form-field">
+  <label for="field-{{ name }}">{{ label }}</label>
+  <input
+    id="field-{{ name }}"
+    name="{{ name }}"
+    {# type=number xóa giá trị sai; text giữ nguyên dữ liệu để người dùng sửa. #}
+    type="{{ 'text' if field_type == 'number' else field_type }}"
+    {% if field_type == 'number' %}inputmode="numeric" pattern="[0-9]+"{% endif %}
+    value="{{ value }}"
+    placeholder="{{ placeholder }}"
+    {% if required %}required{% endif %}
+    {% if min_length > 0 %}minlength="{{ min_length }}"{% endif %}
+    {% if error %}aria-invalid="true" aria-describedby="field-{{ name }}-error"{% endif %}
+  >
+  {% if error %}
+  <div id="field-{{ name }}-error" class="form-error">{{ error }}</div>
+  {% endif %}
+  {% if help_text %}
+  <div class="form-help">{{ help_text }}</div>
+  {% endif %}
+</div>
+{% endmacro %}
+
+{% macro command_chip(chip_id, state, label, detail='', poll_url='', is_online=true) %}
+<div
+  id="{{ chip_id }}"
+  class="command-chip command-chip-{{ state }}"
+  aria-live="polite"
+  {% if is_online and state in ('queued', 'inflight') and poll_url %}
+  hx-get="{{ poll_url }}"
+  hx-trigger="every 1s"
+  hx-target="#{{ chip_id }}"
+  hx-swap="outerHTML"
+  {% endif %}
+>
+  <span aria-hidden="true">
+    {% if state == 'applied' %}✓{% elif state == 'unconfirmed' %}▲{% else %}↻{% endif %}
+  </span>
+  <span>{{ label }}</span>
+  {% if detail %}
+  <small>({{ detail }})</small>
+  {% endif %}
+</div>
+{% endmacro %}
+
+{% macro schedule_grid(day_names, time_slots, schedule_rows) %}
+<div id="schedule-matrix-root" class="schedule-scroll-box">
+  <table class="schedule-matrix-table" aria-label="Ma trận lịch sử dụng 7 ngày nhân 48 khung giờ">
+    <thead>
+      <tr>
+        <th scope="col">Khung giờ</th>
+        {% for d_name in day_names %}
+        <th scope="col">{{ d_name }}</th>
+        {% endfor %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for slot in time_slots %}
+      <tr>
+        <th scope="row">{{ slot.label }}</th>
+        {% for d_idx in range(7) %}
+        {% set is_allowed = (schedule_rows[d_idx][slot.idx] == '1') %}
+        <td>
+          <button
+            type="button"
+            class="slot"
+            data-day="{{ d_idx }}"
+            data-slot="{{ slot.idx }}"
+            aria-pressed="{{ 'true' if is_allowed else 'false' }}"
+            aria-label="{{ day_names[d_idx] }} {{ slot.label }}: {{ 'Cho phép' if is_allowed else 'Khóa' }}"
+          >{{ 'Mở' if is_allowed else 'Khóa' }}</button>
+        </td>
+        {% endfor %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endmacro %}

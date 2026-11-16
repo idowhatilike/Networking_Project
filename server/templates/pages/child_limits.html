@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% from "components/macros.html" import card, form_field, toast %}
+
+{% block title %}Hạn mức thời gian của {{ child.name }} — OpenGuard Kids{% endblock %}
+
+{% block toast %}
+  {{ toast(notice) }}
+{% endblock %}
+
+{% block content %}
+  {% set formValues = formValues | default({}) %}
+  {% set fieldErrors = fieldErrors | default({}) %}
+  {% include "partials/child_tabs_nav.html" %}
+  {% if error %}<div class="form-error" role="alert">{{ error }}</div>{% endif %}
+
+  {% call card(
+    title="Hạn mức tổng theo ngày",
+    subtitle="Thời gian đếm thực tế khi máy đang tương tác (trừ thời gian khóa máy và nghỉ > 5 phút)"
+  ) %}
+    <form method="post" action="/children/{{ child.id }}/limits">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token or 'ogk-dev-csrf-token' }}">
+
+      <div class="range-form-grid">
+        {{ form_field(
+          name="weekday_quota_min",
+          label="Ngày thường Thứ 2 – Thứ 6 (phút/ngày)",
+          field_type="number",
+          value=formValues.get('weekday_quota_min' , child.weekday_quota_min) ,
+          error=fieldErrors.get('weekday_quota_min' , '') ,
+          required=true,
+          help_text="Khuyến nghị cho trẻ 6–11 tuổi: 60 đến 90 phút mỗi ngày thường."
+        ) }}
+
+        {{ form_field(
+          name="weekend_quota_min",
+          label="Cuối tuần Thứ 7 – Chủ nhật (phút/ngày)",
+          field_type="number",
+          value=formValues.get('weekend_quota_min' , child.weekend_quota_min) ,
+          error=fieldErrors.get('weekend_quota_min' , '') ,
+          required=true,
+          help_text="Khuyến nghị cuối tuần: 90 đến 120 phút mỗi ngày."
+        ) }}
+      </div>
+
+      <h3 class="ogk-card-title">Ngân sách riêng theo nhóm nội dung (Nên có)</h3>
+      <p class="ogk-card-subtitle">Đặt 0 nếu không giới hạn riêng (chỉ tính vào tổng hạn mức ngày).</p>
+
+      <div class="range-form-grid">
+        {{ form_field(
+          name="budget_gaming",
+          label="Nhóm Trò chơi (phút/ngày)",
+          field_type="number",
+          value=formValues.get('budget_gaming' , child.category_budgets.get('gaming' , 0)) ,
+          error=fieldErrors.get('budget_gaming' , '') ,
+          required=true
+        ) }}
+
+        {{ form_field(
+          name="budget_entertainment",
+          label="Nhóm Giải trí & Video (phút/ngày)",
+          field_type="number",
+          value=formValues.get('budget_entertainment' ,
+                               child.category_budgets.get('entertainment' , 0)) ,
+          error=fieldErrors.get('budget_entertainment' , '') ,
+          required=true
+        ) }}
+
+        {{ form_field(
+          name="budget_education",
+          label="Nhóm Giáo dục (0 = Không giới hạn riêng)",
+          field_type="number",
+          value=formValues.get('budget_education' , child.category_budgets.get('education' , 0)) ,
+          error=fieldErrors.get('budget_education' , '') ,
+          required=true
+        ) }}
+      </div>
+
+      <div class="ogk-card-footer">
+        <button type="submit" name="action" value="save" class="btn">Lưu hạn mức</button>
+        <button type="submit" name="action" value="clear_adjustments"
+                formnovalidate class="btn btn-secondary">
+          Xóa sạch điều chỉnh giờ thưởng/ngân sách nhóm ({})
+        </button>
+      </div>
+    </form>
+  {% endcall %}
+{% endblock %}

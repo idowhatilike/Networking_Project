@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% from "components/macros.html" import card, status_badge, modal, data_table, toast %}
+
+{% block title %}Quản lý Thiết bị & Ghép đôi — OpenGuard Kids{% endblock %}
+
+{% block toast %}
+  {{ toast(notice) }}
+{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Thiết bị của con</h1>
+      <p class="page-subtitle">Ghép đôi máy tính Windows 10/11 và kiểm tra tính toàn vẹn chính sách</p>
+    </div>
+    <div class="quick-actions">
+      <button type="button" class="btn" data-open-modal="modal-create-enroll">+ Tạo mã ghép đôi 8 ký tự</button>
+    </div>
+  </div>
+
+  {% if error %}
+  <div class="form-error" role="alert">{{ error }}</div>
+  {% endif %}
+
+  {% if generated_code %}
+  {% call card(
+    title="Mã ghép đôi 8 ký tự vừa tạo cho " ~ generated_code.child_name,
+    subtitle="Nhập mã này vào OGK-Agent trên máy tính của con trong vòng 10 phút"
+  ) %}
+    <div class="stats-grid">
+      <div class="ogk-stat">
+        <div class="ogk-stat-label">Mã ghép đôi (8 ký tự)</div>
+        <div class="ogk-stat-value"><code>{{ generated_code.code }}</code></div>
+      </div>
+      <div class="ogk-stat">
+        <div class="ogk-stat-label">Thời gian hiệu lực còn lại</div>
+        <div class="ogk-stat-value">
+          <span data-countdown-sec="{{ generated_code.expires_in_sec }}">10:00</span>
+        </div>
+      </div>
+    </div>
+    <p class="ogk-card-subtitle">
+      ✓ Đã ghi nhận sự đồng ý của phụ huynh ({{ generated_code.consent_version }}) vào Nhật ký kiểm toán.
+    </p>
+  {% endcall %}
+  {% endif %}
+
+  {% call card(
+    title="Danh sách máy tính đã ghép đôi (" ~ (devices | length) ~ " thiết bị)",
+    subtitle="Hiển thị phiên bản chính sách đang áp dụng, chữ ký HMAC và cảnh báo toàn vẹn"
+  ) %}
+    {% call data_table(["Thiết bị & Hồ sơ con", "Trạng thái kết nối", "Phiên bản & Chữ ký chính sách", "Toàn vẹn hệ thống", "Thao tác"]) %}
+      {% for dev in devices %}
+      <tr>
+        <td data-label="Thiết bị">
+          <strong>{{ dev.device_name }}</strong>
+          <div class="ogk-card-subtitle">Con: {{ dev.child_name }} · Định danh: <code>{{ dev.fingerprint_short }}</code></div>
+        </td>
+        <td data-label="Kết nối">
+          {{ status_badge(dev.status, dev.status_label) }}
+          <div class="ogk-card-subtitle">Lần cuối: {{ dev.last_seen }}</div>
+        </td>
+        <td data-label="Chính sách">
+          <div>Đang áp dụng: <strong>v{{ dev.applied_policy_version }}</strong> / mới nhất: <strong>v{{ dev.latest_policy_version }}</strong></div>
+          {% if dev.policy_signature_valid %}
+            {{ status_badge('ok', 'Chữ ký HMAC hợp lệ') }}
+          {% else %}
+            {{ status_badge('danger', 'Lỗi chữ ký HMAC') }}
+          {% endif %}
+        </td>
+        <td data-label="Toàn vẹn">
+          {% if dev.integrity_warning %}
+            {{ status_badge('warn', 'Có cảnh báo đồng hồ') }}
+            <div class="ogk-card-subtitle">{{ dev.integrity_warning }}</div>
+          {% else %}
+            {{ status_badge('ok', 'Bình thường') }}
+          {% endif %}
+        </td>
+        <td data-label="Thao tác">
+          <form method="post" action="/devices/{{ dev.device_id }}/revoke" class="inline-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token or 'ogk-dev-csrf-token' }}">
+            <button type="submit" class="btn btn-secondary btn-sm">Thu hồi</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    {% endcall %}
+  {% endcall %}
+
+  {% call modal("modal-create-enroll", "Tạo mã ghép đôi thiết bị (8 ký tự)") %}
+    <form method="post" action="/enroll-codes">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token or 'ogk-dev-csrf-token' }}">
+      <input type="hidden" name="consent_version" value="NĐ13-v1.0">
+
+      <div class="form-field">
+        <label for="enroll-child-id">1. Chọn hồ sơ của con cho thiết bị này</label>
+        <select id="enroll-child-id" name="child_id" required>
+          <option value="">-- Chọn hồ sơ con --</option>
+          {% for c in children_list %}
+          <option value="{{ c.id }}">{{ c.name }} ({{ c.age }} tuổi)</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-field">
+        <label class="day-checkbox-label">
+          <input type="checkbox" name="consent" value="true" required>
+          <span>
+            Tôi là phụ huynh/người giám hộ hợp pháp, đã thông báo rõ cho con về ứng dụng
+            OpenGuard Kids (NT1) và đồng ý thu thập dữ liệu tối thiểu theo Nghị định 13/2023/NĐ-CP.
+          </span>
+        </label>
+      </div>
+
+      <div class="quick-actions">
+        <button type="submit" class="btn">Sinh mã 8 ký tự (hiệu lực 10 phút)</button>
+        <button type="button" class="btn btn-secondary" data-close-modal="modal-create-enroll">Hủy</button>
+      </div>
+    </form>
+  {% endcall %}
+{% endblock %}

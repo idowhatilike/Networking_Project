@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="kid">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="csrf-token" content="{{ csrf_token or 'ogk-kid-csrf-token' }}">
+  <title>{% block title %}OpenGuard Kids — Giao diện của em{% endblock %}</title>
+  <link rel="stylesheet" href="/static/shared/tokens.css">
+  <link rel="stylesheet" href="/static/vendor/pico.min.css">
+  <link rel="stylesheet" href="/static/shared/components.css">
+  <link rel="stylesheet" href="/static/css/base.css">
+  <link rel="stylesheet" href="/kid-static/kid.css">
+</head>
+<body>
+  <header class="kid-tray-bar">
+    <div class="kid-tray-inner">
+      <a href="/kid" class="brand-link">
+        <span class="brand-mark" aria-hidden="true">OGK</span>
+        <span>OpenGuard Kids · Còn {{ kid.remaining_min }} phút</span>
+      </a>
+      <nav class="kid-nav-pills" aria-label="Menu khay hệ thống của em">
+        <a href="/kid" class="kid-nav-pill {% if kid_tab == 'today' %}kid-nav-pill-active{% endif %}">
+          Thời gian còn lại
+        </a>
+        <a href="/kid/report" class="kid-nav-pill {% if kid_tab == 'report' %}kid-nav-pill-active{% endif %}">
+          Hôm nay em đã dùng gì
+        </a>
+        <a href="/kid/requests" class="kid-nav-pill {% if kid_tab == 'requests' %}kid-nav-pill-active{% endif %}">
+          Xin thêm giờ
+        </a>
+        <a href="/kid/rules" class="kid-nav-pill {% if kid_tab == 'rules' %}kid-nav-pill-active{% endif %}">
+          Luật và nhật ký
+        </a>
+        <a href="/kid/about" class="kid-nav-pill {% if kid_tab == 'about' %}kid-nav-pill-active{% endif %}">
+          Về OpenGuard
+        </a>
+        <a href="/kid/warning?level=1" class="kid-nav-pill {% if kid_tab == 'warning' %}kid-nav-pill-active{% endif %}">
+          Cảnh báo 10/5/1p
+        </a>
+        <a href="/kid/blocked?kind=app" class="kid-nav-pill {% if kid_tab == 'blocked' %}kid-nav-pill-active{% endif %}">
+          Giải thích chặn
+        </a>
+        <a href="/kid/lock-overlay" class="kid-nav-pill {% if kid_tab == 'lock' %}kid-nav-pill-active{% endif %}">
+          Màn hình khóa
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="kid-shell">
+    <div id="toast-area" aria-live="polite">
+      {% block toast %}{% endblock %}
+    </div>
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="app-footer">
+    <span>🌱 OpenGuard Kids đang chạy để hỗ trợ em dùng máy an toàn và cân bằng.</span>
+    <span>Chúng tôi chỉ ghi tên ứng dụng, tên miền và thời lượng (<a href="/kid/about">Về OpenGuard &amp; PRIVACY</a>).</span>
+  </footer>
+
+  <script src="/static/vendor/htmx.min.js"></script>
+  <script src="/static/js/app.js"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

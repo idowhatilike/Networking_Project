@@ -1,0 +1,147 @@
+/* Pico.css minimal self-hosted reset & form/dialog primitives for OpenGuard Kids */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: var(--font, system-ui, sans-serif);
+  font-size: var(--fs-base, 16px);
+  line-height: 1.5;
+  color: var(--c-text, #0F172A);
+  background-color: var(--c-bg, #F8FAFC);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+
+main, header, footer, nav, section, article, aside {
+  display: block;
+}
+
+a {
+  color: var(--c-primary, #0F766E);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button,
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  min-height: 44px;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius, 12px);
+  border: 1px solid var(--c-primary, #0F766E);
+  background-color: var(--c-primary, #0F766E);
+  color: #FFFFFF;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+button:hover,
+.btn:hover {
+  background-color: var(--c-primary-hover, #115E59);
+  text-decoration: none;
+}
+
+button:focus-visible,
+.btn:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+a:focus-visible {
+  outline: 3px solid var(--c-primary, #0F766E);
+  outline-offset: 2px;
+}
+
+.btn-outline {
+  background-color: transparent;
+  color: var(--c-primary, #0F766E);
+  border-color: var(--c-primary, #0F766E);
+}
+
+.btn-outline:hover {
+  background-color: var(--c-primary-soft, #CCFBF1);
+  color: var(--c-primary, #0F766E);
+}
+
+.btn-danger {
+  background-color: var(--c-danger, #B91C1C);
+  border-color: var(--c-danger, #B91C1C);
+  color: #FFFFFF;
+}
+
+.btn-danger:hover {
+  background-color: #991B1B;
+}
+
+.btn-secondary {
+  background-color: var(--c-surface, #FFFFFF);
+  border-color: var(--c-border, #E2E8F0);
+  color: var(--c-text, #0F172A);
+}
+
+.btn-secondary:hover {
+  background-color: var(--c-bg, #F8FAFC);
+}
+
+.btn-sm {
+  min-height: 36px;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="number"],
+input[type="search"],
+select,
+textarea {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.55rem 0.85rem;
+  border-radius: var(--radius, 12px);
+  border: 1px solid var(--c-border, #E2E8F0);
+  background-color: var(--c-surface, #FFFFFF);
+}
+
+label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+  color: var(--c-text, #0F172A);
+}
+
+dialog {
+  border: 1px solid var(--c-border, #E2E8F0);
+  border-radius: var(--radius, 12px);
+  padding: 1.5rem;
+  max-width: 480px;
+  width: calc(100% - 2rem);
+  background: var(--c-surface, #FFFFFF);
+  color: var(--c-text, #0F172A);
+  box-shadow: var(--shadow-md);
+}
+
+dialog::backdrop {
+  background: rgba(15, 23, 42, 0.45);
+}

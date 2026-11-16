@@ -1,0 +1,75 @@
+{% extends "base_kid.html" %}
+{% from "components/macros.html" import card, data_table, toast %}
+
+{% block title %}Yêu cầu của em — OpenGuard Kids{% endblock %}
+
+{% block toast %}
+  {{ toast(notice) }}
+{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Xin thêm giờ &amp; Gửi phản hồi cho Bố/Mẹ</h1>
+      <p class="page-subtitle">
+        Khi em gửi yêu cầu, màn hình sẽ tự động cập nhật mỗi 3 giây cho đến khi có câu trả lời.
+      </p>
+    </div>
+  </div>
+
+  {% call card(
+    title="Gửi yêu cầu mới cho Bố/Mẹ (NT6: Có cơ chế thương lượng)",
+    subtitle="Em hãy chọn loại yêu cầu và ghi rõ lý do để Bố/Mẹ dễ xem nhé"
+  ) %}
+    <form method="post" action="/kid/requests">
+      <div class="stats-grid">
+        <div>
+          <label for="kind-select">Em muốn gửi yêu cầu gì?</label>
+          <select id="kind-select" name="kind">
+            <option value="add_time" {% if selected_kind == 'add_time' %}selected{% endif %}>
+              Xin thêm 15 phút dùng máy
+            </option>
+            <option value="unblock_domain" {% if selected_kind == 'unblock_domain' %}selected{% endif %}>
+              Con nghĩ trang này bị chặn nhầm
+            </option>
+          </select>
+        </div>
+        <div>
+          <label for="subject-input">Tên trang web / ứng dụng (nếu bị chặn nhầm)</label>
+          <input
+            id="subject-input"
+            type="text"
+            name="subject"
+            value="{{ default_subject }}"
+            placeholder="Ví dụ: scratch.mit.edu hoặc +15 phút"
+          >
+        </div>
+      </div>
+
+      <label for="reason-input">Lý do em muốn gửi cho Bố/Mẹ</label>
+      <input
+        id="reason-input"
+        type="text"
+        name="reason"
+        required
+        placeholder="Ví dụ: Con đang làm nốt bài tập Tin học trên trường ạ"
+      >
+
+      <div class="quick-actions">
+        <button type="submit" class="btn">Gửi yêu cầu cho Bố/Mẹ</button>
+        <a href="/kid" class="btn btn-outline">Quay lại trang Hôm nay</a>
+      </div>
+    </form>
+  {% endcall %}
+
+  {% call card(
+    title="Danh sách yêu cầu em đã gửi",
+    subtitle="Trạng thái: Đã gửi → Bố/Mẹ đang xem → Đồng ý / Chưa đồng ý kèm lời nhắn"
+  ) %}
+    {% call data_table(["Thời điểm", "Loại yêu cầu", "Nội dung & Lý do", "Tiến trình", "Lời nhắn của Bố/Mẹ"]) %}
+      {% for r in kid.my_requests %}
+        {% include "partials/kid_request_row.html" %}
+      {% endfor %}
+    {% endcall %}
+  {% endcall %}
+{% endblock %}

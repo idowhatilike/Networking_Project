@@ -1,0 +1,26 @@
+:root {
+  --c-primary: #0F766E;
+  --c-primary-hover: #115E59;
+  --c-primary-soft: #CCFBF1;
+  --c-ok: #15803D;
+  --c-ok-soft: #DCFCE7;
+  --c-warn: #B45309;
+  --c-warn-soft: #FEF3C7;
+  --c-danger: #B91C1C;
+  --c-danger-soft: #FEE2E2;
+  --c-text: #0F172A;
+  --c-muted: #475569;
+  --c-bg: #F8FAFC;
+  --c-surface: #FFFFFF;
+  --c-border: #E2E8F0;
+  --radius: 12px;
+  --fs-base: 1rem;
+  --font: 'Be Vietnam Pro', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06);
+  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
+}
+
+[data-theme='kid'] {
+  --radius: 20px;
+  --fs-base: 1.125rem;
+}

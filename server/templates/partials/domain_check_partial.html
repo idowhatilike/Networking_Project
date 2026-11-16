@@ -1,0 +1,23 @@
+{% from "components/macros.html" import status_badge %}
+<div id="domain-check-result" class="ogk-stat" role="status">
+  {% if result %}
+    <div class="ogk-card-header">
+      <div>
+        <strong>Tên miền kiểm tra: <code>{{ result.domain }}</code></strong>
+        <p class="ogk-card-subtitle">
+          Nhóm: <strong>{{ result.category_label }}</strong> ·
+          Theo luật <strong>#{{ result.rule_id }}</strong> do <strong>{{ result.set_by }}</strong>
+          đặt ngày <strong>{{ result.set_at }}</strong>
+        </p>
+      </div>
+      {% if result.allowed %}
+        {{ status_badge('ok', 'Cho phép truy cập') }}
+      {% else %}
+        {{ status_badge('danger', 'Bị chặn') }}
+      {% endif %}
+    </div>
+    <p class="ogk-card-subtitle">Lý do hiển thị cho con (NT4): “{{ result.reason }}”</p>
+  {% else %}
+    <span class="ogk-card-subtitle">Nhập tên miền (ví dụ: vioedu.vn, roblox.com, dns.google) rồi bấm Kiểm tra.</span>
+  {% endif %}
+</div>

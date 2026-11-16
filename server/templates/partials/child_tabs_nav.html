@@ -1,0 +1,41 @@
+{% from "components/macros.html" import status_badge %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">{{ child.name }} ({{ child.age }} tuổi) · {{ child.device_name }}</h1>
+    <p class="page-subtitle">
+      {{ child.last_seen }} · Luật áp dụng: <strong>v{{ child.applied_policy_version }}</strong>
+      (mới nhất: <strong>v{{ child.latest_policy_version }}</strong>)
+    </p>
+  </div>
+  <div class="quick-actions">
+    {{ status_badge(child.status, child.status_label) }}
+    <a href="/children" class="btn btn-secondary btn-sm">← Danh sách con</a>
+  </div>
+</div>
+
+<nav class="child-tabs" aria-label="Các mục thiết lập cho {{ child.name }}">
+  <a
+    href="/children/{{ child.id }}"
+    class="child-tab-link {% if active_tab == 'today' %}child-tab-link-active{% endif %}"
+  >Hôm nay</a>
+  <a
+    href="/children/{{ child.id }}/schedule"
+    class="child-tab-link {% if active_tab == 'schedule' %}child-tab-link-active{% endif %}"
+  >Lịch tuần (7×48)</a>
+  <a
+    href="/children/{{ child.id }}/limits"
+    class="child-tab-link {% if active_tab == 'limits' %}child-tab-link-active{% endif %}"
+  >Hạn mức</a>
+  <a
+    href="/children/{{ child.id }}/apps"
+    class="child-tab-link {% if active_tab == 'apps' %}child-tab-link-active{% endif %}"
+  >Ứng dụng</a>
+  <a
+    href="/children/{{ child.id }}/web"
+    class="child-tab-link {% if active_tab == 'web' %}child-tab-link-active{% endif %}"
+  >Website</a>
+  <a
+    href="/children/{{ child.id }}/reports"
+    class="child-tab-link {% if active_tab == 'reports' %}child-tab-link-active{% endif %}"
+  >Báo cáo</a>
+</nav>

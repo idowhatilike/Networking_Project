@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% from "components/macros.html" import card, status_badge, data_table, empty_state, toast %}
+
+{% block title %}Yêu cầu của con — OpenGuard Kids{% endblock %}
+
+{% block toast %}
+  {{ toast(notice) }}
+{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Hộp thư yêu cầu của con</h1>
+      <p class="page-subtitle">Duyệt yêu cầu Xin thêm giờ hoặc Báo chặn nhầm kèm lời nhắn giải thích cho con (NT3)</p>
+    </div>
+    <div class="quick-actions">
+      <a
+        href="/requests?status=pending"
+        class="btn btn-sm {% if status_filter != 'pending' %}btn-secondary{% endif %}"
+      >Chưa trả lời</a>
+      <a
+        href="/requests?status=resolved"
+        class="btn btn-sm {% if status_filter != 'resolved' %}btn-secondary{% endif %}"
+      >Đã trả lời</a>
+      <a
+        href="/requests?status=all"
+        class="btn btn-sm {% if status_filter != 'all' %}btn-secondary{% endif %}"
+      >Tất cả</a>
+    </div>
+  </div>
+
+  {% call card(
+    title="Danh sách yêu cầu (" ~ (requests_list | length) ~ " mục)",
+    subtitle="Đồng ý xin thêm giờ sẽ tự động cộng giờ cho máy của con; đồng ý báo chặn nhầm sẽ mở trang web tương ứng"
+  ) %}
+    {% if requests_list %}
+      {% call data_table(["Con & Loại yêu cầu", "Lý do con viết", "Phản hồi của Bố/Mẹ"]) %}
+        {% for r in requests_list %}
+        <tr id="req-{{ r.id }}">
+          <td data-label="Yêu cầu">
+            <strong>{{ r.summary }}</strong>
+            <div class="ogk-card-subtitle">{{ r.kind_label }} · {{ r.requested_at }}</div>
+          </td>
+          <td data-label="Lý do">“{{ r.reason }}”</td>
+          <td data-label="Phản hồi">
+            {% if r.status == 'pending' %}
+              <form
+                hx-post="/requests/{{ r.id }}/decision"
+                hx-target="#req-{{ r.id }}"
+                hx-swap="outerHTML"
+              >
+                <div class="request-decision-form">
+                  <input
+                    id="msg-{{ r.id }}"
+                    type="text"
+                    name="message"
+                    placeholder="Lời nhắn cho con..."
+                    required
+                  >
+                  <button type="submit" name="decision" value="approve" class="btn btn-sm">Đồng ý</button>
+                  <button type="submit" name="decision" value="deny" class="btn btn-secondary btn-sm">Từ chối</button>
+                </div>
+                <div class="quick-actions">
+                  <button
+                    type="button"
+                    class="btn btn-secondary btn-sm"
+                    data-fill-target="msg-{{ r.id }}"
+                    data-fill-text="Được, 15 phút nhé"
+                  >“Được, 15 phút nhé”</button>
+                  <button
+                    type="button"
+                    class="btn btn-secondary btn-sm"
+                    data-fill-target="msg-{{ r.id }}"
+                    data-fill-text="Hôm nay đủ rồi, mai nhé"
+                  >“Hôm nay đủ rồi, mai nhé”</button>
+                </div>
+              </form>
+            {% elif r.status == 'approved' %}
+              {{ status_badge('ok', 'Đã đồng ý') }}
+              <div class="ogk-card-subtitle">“{{ r.parent_message }}”</div>
+            {% else %}
+              {{ status_badge('warn', 'Đã từ chối') }}
+              <div class="ogk-card-subtitle">“{{ r.parent_message }}”</div>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      {% endcall %}
+    {% else %}
+      {{ empty_state("Không có yêu cầu nào", "Hiện không có yêu cầu nào trong mục lọc này.") }}
+    {% endif %}
+  {% endcall %}
+{% endblock %}

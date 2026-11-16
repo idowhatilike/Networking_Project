@@ -1,0 +1,70 @@
+{% extends "base_kid.html" %}
+{% from "components/macros.html" import card, status_badge, progress, toast %}
+
+{% block title %}Hôm nay của em — OpenGuard Kids{% endblock %}
+
+{% block toast %}
+  {{ toast(notice) }}
+{% endblock %}
+
+{% block content %}
+  <div class="alert-banner" role="status">
+    <div>
+      <strong>👋 Thông báo minh bạch (NT1):</strong>
+      <span>{{ kid.status_message }} ({{ kid.device_name }}).</span>
+    </div>
+    {% if kid.online %}
+      {{ status_badge('online', 'Đang kết nối') }}
+    {% else %}
+      {{ status_badge('warn', 'Đang dùng luật đã lưu') }}
+    {% endif %}
+  </div>
+
+  {% if kid.integrity_notice %}
+  <div class="ogk-stat" role="status">
+    <span>ℹ️ {{ kid.integrity_notice }}</span>
+  </div>
+  {% endif %}
+
+  <section class="kid-hero-card" aria-label="Thời gian còn lại hôm nay">
+    <div class="ogk-card-header">
+      <div>
+        <h1 class="page-title">Chào {{ kid.child_name }}!</h1>
+        <p class="ogk-card-subtitle">Thời gian dùng máy còn lại của em hôm nay:</p>
+      </div>
+      {{ status_badge('ok', 'Đang trong khung giờ cho phép') }}
+    </div>
+
+    <div class="kid-big-time" aria-live="polite">
+      Còn {{ kid.remaining_min }} phút
+    </div>
+
+    {{ progress(
+      value=kid.used_min,
+      max_val=kid.effective_quota_min,
+      label="Đã dùng hôm nay",
+      unit="phút"
+    ) }}
+
+    <div class="ogk-card-footer">
+      <div class="quick-actions">
+        <a href="/kid/requests?kind=add_time" class="btn">Xin thêm giờ</a>
+        <a href="/kid/requests?kind=unblock_domain" class="btn btn-outline">
+          Con nghĩ trang này bị chặn nhầm
+        </a>
+        <a href="/kid/report" class="btn btn-secondary">Hôm nay em đã dùng gì →</a>
+      </div>
+    </div>
+  </section>
+
+  {% call card(
+    title="Tóm tắt quy tắc hôm nay của em",
+    subtitle="Bố/Mẹ và em đã cùng thống nhất các khung giờ sau"
+  ) %}
+    <ul>
+      {% for rule_line in kid.rules_plain_language %}
+      <li>{{ rule_line }}</li>
+      {% endfor %}
+    </ul>
+  {% endcall %}
+{% endblock %}

@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% from "components/macros.html" import card , status_badge , data_table , empty_state , toast ,
+                                      form_field %}
+
+{% block title %}Quản lý Ứng dụng của {{ child.name }} — OpenGuard Kids{% endblock %}
+
+{% block toast %}
+  {{ toast(notice) }}
+{% endblock %}
+
+{% block content %}
+  {% set formValues = formValues | default({}) %}
+  {% set fieldErrors = fieldErrors | default({}) %}
+  {% include "partials/child_tabs_nav.html" %}
+  {% if error %}<div class="form-error" role="alert">{{ error }}</div>{% endif %}
+
+  <div class="alert-banner">
+    <div>
+      <strong>🔒 Nhận diện chính xác bằng mã băm SHA-256:</strong>
+      <span>Hệ thống so sánh theo mã băm nên đổi tên tệp thực thi vẫn nhận ra đúng ứng dụng.</span>
+    </div>
+  </div>
+
+  {% call card(
+    title="Thêm luật từ danh sách ứng dụng đã thấy trên máy " ~ child.device_name,
+    subtitle="Chọn trực tiếp từ các ứng dụng Agent đã ghi nhận để tự động lấy mã băm SHA-256 (không cần tự nhập hash)"
+  ) %}
+    <form method="post" action="/children/{{ child.id }}/apps" class="range-form-grid">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token or 'ogk-dev-csrf-token' }}">
+      <div>
+        <label for="observed-app-select">Ứng dụng đã thấy trên máy</label>
+        <select id="observed-app-select" name="exe_name" required>
+          {% for obs in child.observed_apps %}
+          <option value="{{ obs.exe_name }}"
+                  {% if formValues.get('exe_name') == obs.exe_name %}selected{% endif %}>
+            {{ obs.display_name }} — SHA-256: {{ obs.sha256_short }}… ({{ obs.last_seen }})
+          </option>
+          {% endfor %}
+          {% if not child.observed_apps %}
+          <option value="notepad.exe">Notepad (notepad.exe) — SHA-256: a1b2c3d4…</option>
+          {% endif %}
+        </select>
+      </div>
+      <div>
+        <label for="app-rule-allowed">Quyết định</label>
+        <select id="app-rule-allowed" name="allowed">
+          <option value="allow"
+                  {% if formValues.get('allowed' , 'allow') == 'allow' %}selected{% endif %}>
+            Cho phép sử dụng
+          </option>
+          <option value="block" {% if formValues.get('allowed') == 'block' %}selected{% endif %}>
+            Chặn mở ứng dụng
+          </option>
+        </select>
+      </div>
+      {{ form_field(
+        name='quota_min' , label='Hạn mức riêng (phút, 0 = theo máy)' , field_type='number' ,
+        value=formValues.get('quota_min' , '0') , error=fieldErrors.get('quota_min' , '')
+      ) }}
+      <div>
+        <button type="submit" class="btn">+ Thêm luật ứng dụng</button>
+      </div>
+    </form>
+  {% endcall %}
+
+  {% call card(
+    title="Danh sách luật ứng dụng đang áp dụng (" ~ (child.apps | length) ~ " mục)",
+    subtitle="Mọi lần chặn đều hiển thị tên người đặt luật và thời điểm đặt cho con biết (NT4)"
+  ) %}
+    {% if child.apps %}
+      {% call data_table(["Ứng dụng", "Mã băm SHA-256 (8 ký tự)", "Nhóm", "Hạn mức riêng", "Trạng thái", "Người đặt"]) %}
+        {% for app_item in child.apps %}
+        <tr>
+          <td data-label="Ứng dụng">
+            <strong>{{ app_item.display_name }}</strong>
+            <div class="ogk-card-subtitle">{{ app_item.exe_name }}</div>
+          </td>
+          <td data-label="SHA-256">
+            <code class="hash-code" title="{{ app_item.sha256 }}">{{ app_item.sha256_short }}</code>
+          </td>
+          <td data-label="Nhóm">{{ app_item.category }}</td>
+          <td data-label="Hạn mức">
+            {% if app_item.quota_min > 0 %}{{ app_item.quota_min }} phút/ngày{% else %}Không giới hạn riêng{% endif %}
+          </td>
+          <td data-label="Trạng thái">
+            {% if app_item.allowed %}
+              {{ status_badge('ok', 'Cho phép') }}
+            {% else %}
+              {{ status_badge('danger', 'Đang chặn') }}
+            {% endif %}
+          </td>
+          <td data-label="Người đặt">{{ app_item.set_by }} ({{ app_item.set_at }})</td>
+        </tr>
+        {% endfor %}
+      {% endcall %}
+    {% else %}
+      {{ empty_state("Chưa có luật ứng dụng riêng", "Chọn ứng dụng từ danh sách bên trên để thêm luật.") }}
+    {% endif %}
+  {% endcall %}
+{% endblock %}
